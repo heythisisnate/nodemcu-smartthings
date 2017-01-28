@@ -1,62 +1,49 @@
-apiEndpoint = "https://graph-na02-useast1.api.smartthings.com/api/smartapps/installations/5e70af82-6c08-434d-8605-441850dded08/event"
-apiAuthHeader = "Host: graph-na02-useast1.api.smartthings.com\r\nAuthorization: Bearer " .. auth_token .. "\r\nContent-Type: application/json\r\n"
+require "variables"
+
+apiAuthHeader = "Host: " .. apiHost .. "\r\nAuthorization: Bearer " .. auth_token .. "\r\nContent-Type: application/json\r\n"
 doorStates = {}
 doorStates[0] = "Closed"
 doorStates[1] = "Open"
 
-frontDoorPin = 6
-garageEntryPin = 7
-motionSensorPin = 2
+for i,sensor in pairs(sensors) do
+  gpio.mode(sensor.gpioPin, gpio.INPUT, gpio.PULLUP)
+  sensor.state = gpio.read(sensor.gpioPin)
 
-gpio.mode(garageEntryPin, gpio.INPUT, gpio.PULLUP)
-gpio.mode(frontDoorPin, gpio.INPUT, gpio.PULLUP)
-gpio.mode(motionSensorPin, gpio.INPUT, gpio.PULLUP)
+  gpio.trig(sensor.gpioPin, "both", function (level)
+    local newState = gpio.read(sensor.gpioPin)
+    if sensor.state ~= newState then
+      sensor.state = newState
+      print(sensor.name .. " is " .. doorStates[sensor.state])
+      queueRequest(sensor.deviceId, sensor.state)
+    end
+  end)
+end
 
-frontDoorState = gpio.read(frontDoorPin)
-garageEntryState = gpio.read(garageEntryPin)
-motionSensorState = gpio.read(motionSensorPin)
+requestQueue = {}
 
--- Pin D3: Front Door
-gpio.trig(frontDoorPin, "both", function (level)
-  newState = gpio.read(frontDoorPin)
-  if frontDoorState ~= newState then
-    frontDoorState = newState
-    print("Front door is " .. doorStates[frontDoorState])
-    sendRequest("675202f5-f7b4-41ac-8099-c8f84a301b21",frontDoorState)
-  end
-end)
+function queueRequest(sensorId, value)
+  local requestData = { sensorId = sensorId, value = value }
+  table.insert(requestQueue, requestData)
+end
 
--- Pin D7: Garage Entry Door
-gpio.trig(garageEntryPin, "both", function (level)
-  newState = gpio.read(garageEntryPin)
-  if garageEntryState ~= newState then
-    garageEntryState = newState
-    print("Garage Entry door is " .. doorStates[garageEntryState])
-    sendRequest("6c2c32be-ccd0-48e1-bed2-63b846e5fa1a",garageEntryState)
-  end
-end)
-
--- Pin D5: Motion Sensor
-gpio.trig(motionSensorPin, "both", function (level)
-  newState = gpio.read(motionSensorPin)
-  if motionSensorState ~= newState then
-    motionSensorState = newState
-    print("Motion Sensor is " .. doorStates[motionSensorState])
-    sendRequest("224c2a13-b24e-41dc-88fb-2424e3ffb41b",motionSensorState)
-  end
-end)
-
-function sendRequest(sensor_id, value)  
-  payload = [[{"sensor_id":"]] .. sensor_id .. [[","state":]] .. value .. "}"
+function sendRequest(sensorData)
+  print(sensorData)
+  payload = [[{"sensor_id":"]] .. sensorData.sensorId .. [[","state":]] .. sensorData.value .. "}"
   headers = apiAuthHeader .. "Content-Length: " .. string.len(payload) .. "\r\n"
-  print(apiEndpoint)
+  print(apiHost .. apiEndpoint)
   print(payload)
   print(headers)
+  
   http.post(
-    apiEndpoint,
+    apiHost .. apiEndpoint,
     headers, 
     payload,
       function(code, data)
         print(code, data)
       end)
 end
+
+tmr.create():alarm(500, tmr.ALARM_AUTO, function()
+  local data = table.remove(requestQueue)
+  if data then sendRequest(data) end
+end)
