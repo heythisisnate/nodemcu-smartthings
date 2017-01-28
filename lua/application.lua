@@ -35,13 +35,18 @@ function sendRequest(sensorData)
         if code > 201 then
           print("Error " .. code .. " posting " .. sensorData.sensorId .. ", retrying")
           table.insert(requestQueue, 1, sensorData)
-        else
-          print(data)
         end
       end)
 end
 
 tmr.create():alarm(500, tmr.ALARM_AUTO, function()
   local data = table.remove(requestQueue)
-  if data then sendRequest(data) end
+  if data then 
+    if pcall(sendRequest, data) then
+      print("Success: " .. data.sensorId .. " = " .. data.value)
+    else   
+      table.insert(requestQueue, 1, data)
+      print("Retrying: " .. data.sensorId .. " = " .. data.value)
+    end
+  end
 end)
