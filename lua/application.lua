@@ -1,9 +1,6 @@
 require "variables"
 
-apiAuthHeader = "Host: " .. apiHost .. "\r\nAuthorization: Bearer " .. auth_token .. "\r\nContent-Type: application/json\r\n"
-doorStates = {}
-doorStates[0] = "Closed"
-doorStates[1] = "Open"
+globalHeaders = "Host: " .. apiHost .. "\r\nAuthorization: Bearer " .. auth_token .. "\r\nContent-Type: application/json\r\n"
 
 for i,sensor in pairs(sensors) do
   gpio.mode(sensor.gpioPin, gpio.INPUT, gpio.PULLUP)
@@ -13,7 +10,7 @@ for i,sensor in pairs(sensors) do
     local newState = gpio.read(sensor.gpioPin)
     if sensor.state ~= newState then
       sensor.state = newState
-      print(sensor.name .. " is " .. doorStates[sensor.state])
+      print(sensor.name .. " pin is " .. sensor.state)
       queueRequest(sensor.deviceId, sensor.state)
     end
   end)
@@ -27,19 +24,20 @@ function queueRequest(sensorId, value)
 end
 
 function sendRequest(sensorData)
-  print(sensorData)
-  payload = [[{"sensor_id":"]] .. sensorData.sensorId .. [[","state":]] .. sensorData.value .. "}"
-  headers = apiAuthHeader .. "Content-Length: " .. string.len(payload) .. "\r\n"
-  print(apiHost .. apiEndpoint)
-  print(payload)
-  print(headers)
+  local payload = [[{"sensor_id":"]] .. sensorData.sensorId .. [[","state":]] .. sensorData.value .. "}"
+  local headers = globalHeaders .. "Content-Length: " .. string.len(payload) .. "\r\n"
   
   http.post(
     apiHost .. apiEndpoint,
     headers, 
     payload,
       function(code, data)
-        print(code, data)
+        if code > 201 then
+          print("Error " .. code .. " posting " .. sensorData.sensorId .. ", retrying")
+          table.insert(requestQueue, 1, sensorData)
+        else
+          print(data)
+        end
       end)
 end
 
