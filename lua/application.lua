@@ -2,6 +2,7 @@ require "variables"
 
 globalHeaders = "Host: " .. apiHost .. "\r\nAuthorization: Bearer " .. auth_token .. "\r\nContent-Type: application/json\r\n"
 
+-- Iterate through each configured sensor (from variables.lua) and set up trigger on its corresponding pin
 for i,sensor in pairs(sensors) do
   gpio.mode(sensor.gpioPin, gpio.INPUT, gpio.PULLUP)
   sensor.state = gpio.read(sensor.gpioPin)
@@ -40,7 +41,7 @@ function sendRequest(sensorData)
 end
 
 tmr.create():alarm(500, tmr.ALARM_AUTO, function()
-  local data = table.remove(requestQueue)
+  local data = table.remove(requestQueue, 1)
   if data then 
     if pcall(sendRequest, data) then
       print("Success: " .. data.sensorId .. " = " .. data.value)
