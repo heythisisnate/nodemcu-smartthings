@@ -15,15 +15,19 @@ for i,sensor in pairs(sensors) do
       queueRequest(sensor.deviceId, sensor.state)
     end
   end)
+
+  print("Listening for " .. sensor.name .. " on pin D" .. sensor.gpioPin)
 end
 
 requestQueue = {}
 
+-- Inserts a request to the end of the queue
 function queueRequest(sensorId, value)
   local requestData = { sensorId = sensorId, value = value }
   table.insert(requestQueue, requestData)
 end
 
+-- Constructs a POST request to SmartThings to change the state of a sensor
 function sendRequest(sensorData)
   local payload = [[{"sensor_id":"]] .. sensorData.sensorId .. [[","state":]] .. sensorData.value .. "}"
   local headers = globalHeaders .. "Content-Length: " .. string.len(payload) .. "\r\n"
@@ -40,6 +44,9 @@ function sendRequest(sensorData)
       end)
 end
 
+-- Process the request queue every 500ms, taking the next request from the front of the queue.
+-- In case of a HTTP failure, re-insert the request data back into the first position so it will
+-- retry on the next cycle.
 tmr.create():alarm(500, tmr.ALARM_AUTO, function()
   local data = table.remove(requestQueue, 1)
   if data then 

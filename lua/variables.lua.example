@@ -1,0 +1,19 @@
+apiHost     = "https://graph-na02-useast1.api.smartthings.com"    
+apiEndpoint = "/api/smartapps/installations/88888888-cccc-dddd-55555-44444444444/event"
+
+sensors = {}
+sensors[1] = {
+	name = "Front Door",
+	deviceId = "88888888-cccc-dddd-5555-444444444444",
+	gpioPin = 6
+}
+sensors[2] = {
+	name = "Back Door",
+	deviceId = "88888888-cccc-dddd-5555-ffffffffffff",
+	gpioPin = 7
+}
+sensors[3] = {
+	name = "Motion Sensor",
+	deviceId = "88888888-cccc-dddd-5555-eeeeeeeeeeee",,
+	gpioPin = 2
+}
