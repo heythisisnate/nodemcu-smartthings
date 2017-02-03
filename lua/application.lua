@@ -44,10 +44,11 @@ function sendRequest(sensorData)
       end)
 end
 
--- Process the request queue every 500ms, taking the next request from the front of the queue.
+-- Process the request queue once every second, taking the next request from the front of the queue.
 -- In case of a HTTP failure, re-insert the request data back into the first position so it will
 -- retry on the next cycle.
-tmr.create():alarm(500, tmr.ALARM_AUTO, function()
+-- This throttles the HTTP calls to SmartThings in an attempt to prevent timeouts
+tmr.create():alarm(1000, tmr.ALARM_AUTO, function()
   local data = table.remove(requestQueue, 1)
   if data then 
     if pcall(sendRequest, data) then
