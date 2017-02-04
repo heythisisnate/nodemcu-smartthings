@@ -28,34 +28,29 @@ function queueRequest(sensorId, value)
 end
 
 -- Constructs a POST request to SmartThings to change the state of a sensor
-function sendRequest(sensorData)
-  local payload = [[{"sensor_id":"]] .. sensorData.sensorId .. [[","state":]] .. sensorData.value .. "}"
-  local headers = globalHeaders .. "Content-Length: " .. string.len(payload) .. "\r\n"
-  
-  http.post(
-    apiHost .. apiEndpoint,
-    headers, 
-    payload,
-      function(code, data)
-        if code > 201 then
-          print("Error " .. code .. " posting " .. sensorData.sensorId .. ", retrying")
-          table.insert(requestQueue, 1, sensorData)
-        end
-      end)
+function doNextRequest()
+  local sensorData = requestQueue[1]
+  if sensorData then
+      local payload = [[{"sensor_id":"]] .. sensorData.sensorId .. [[","state":]] .. sensorData.value .. "}"
+      local headers = globalHeaders .. "Content-Length: " .. string.len(payload) .. "\r\n"
+      
+      http.post(
+        apiHost .. apiEndpoint,
+        headers, 
+        payload,
+          function(code, data)
+            if code == 201 then
+              print("Success: " .. sensorData.sensorId .. " = " .. sensorData.value)
+              table.remove(requestQueue, 1) -- remove from the queue when successful
+            elseif code > 201 then
+              print("Error " .. code .. " posting " .. sensorData.sensorId .. ", retrying")
+            end
+          end)
+  end
 end
 
 -- Process the request queue once every second, taking the next request from the front of the queue.
 -- In case of a HTTP failure, re-insert the request data back into the first position so it will
 -- retry on the next cycle.
 -- This throttles the HTTP calls to SmartThings in an attempt to prevent timeouts
-tmr.create():alarm(1000, tmr.ALARM_AUTO, function()
-  local data = table.remove(requestQueue, 1)
-  if data then 
-    if pcall(sendRequest, data) then
-      print("Success: " .. data.sensorId .. " = " .. data.value)
-    else   
-      table.insert(requestQueue, 1, data)
-      print("Retrying: " .. data.sensorId .. " = " .. data.value)
-    end
-  end
-end)
+tmr.create():alarm(1000, tmr.ALARM_AUTO, doNextRequest)
