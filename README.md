@@ -58,3 +58,46 @@ The SmartApp receives data from your NodeMCU device, and updates the status of y
   * [Cloud Sensor](https://raw.githubusercontent.com/heythisisnate/SmartThingsPublic/master/smartapps/heythisisnate/cloud-sensor.src/cloud-sensor.groovy)
 1. Once the SmartApp is created, click the edit icon or go to App Settings -> OAuth and enable OAuth and save.
 1. Make note of the OAuth Client ID and Client Secret, you'll need these later.
+1. Click Publish -> For Me
+
+### 4. Generate an OAuth token
+
+The OAuth token is used to sign HTTP requests from the NodeMCU to the SmartApp you just created. [SmartThings has documentation of this process here.](http://docs.smartthings.com/en/latest/smartapp-web-services-developers-guide/authorization.html). We'll be going through the OAuth flow manually to capture the token which can then be saved on the NodeMCU.
+
+1. Copy and paste the below web address into your browser and replace `YOUR-SMARTAPP-CLIENT-ID` with the OAuth Client ID from the SmartApp created eariler.
+   
+   ```
+   https://graph.api.smartthings.com/oauth/authorize?response_type=code&client_id=YOUR-SMARTAPP-CLIENT-ID&scope=app&redirect_uri=http://localhost:3000/auth
+   ```
+   
+1. You'll see a page like this allowing you to authorize the devices you set up earlier:
+
+   ![](screenshots/none Authorization 2017-02-05 21-59-54.png)
+
+1. Once you click Authorize, you'll be redirect to http://localhost:3000/auth which will error. That's ok! It wasn't supposed to work. All you need is the code out of the URL parameter:
+
+   ![](screenshots/localhost 2017-02-05 22-24-28.png)
+
+1. Now that you've got the code, it's time to make a POST request to get the access token. For this I like to use tools [Advanced REST Client Chrome app](https://chrome.google.com/webstore/detail/advanced-rest-client/hgmloofddffdnphfgcellkdfbfbjeloo?hl=en-US). You can use any tool that can create a POST request with form parameters. Just fill in [the fields](http://docs.smartthings.com/en/latest/smartapp-web-services-developers-guide/authorization.html#get-access-token) as shown:
+
+  ![](screenshots/Advanced REST client 2017-02-05 22-09-03.png)
+
+1. Click Send, and with any luck, you'll get a successful response back that contains your access token:
+
+  ![](screenshots/Advanced REST client 2017-02-05 22-11-09.png)
+
+1. Finally, get your SmartApp endpoint by doing a GET request to `https://graph.api.smartthings.com/api/smartapps/endpoints`, signing the request with an `Authorization` header and your token:
+  
+  ![](screenshots/Advanced REST client 2017-02-05 22-52-45.png)  
+
+1. Click send and make note of the url data returned:
+  
+  ![](screenshots/Advanced REST client 2017-02-05 22-53-21.png)  
+
+
+### 5. Configure Your Devices
+
+1. Clone or download this repository and open up the `lua` folder.
+1. Copy or rename `variables.lua.example` to `variables.lua`
+1. Copy or rename `credentials.lua.example` to `credentials.lua`
+1. Open up `credentials.lua` in your favorite text editor and put in your WiFi SSID and password, and the access token obtained in the previous step. 
