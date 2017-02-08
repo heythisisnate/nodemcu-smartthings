@@ -107,10 +107,19 @@ The OAuth token is used to sign HTTP requests from the NodeMCU to the SmartApp y
   Copy the `base_url` field from here into the `apiHost` variable in the variables file
   Copy the `url` field into the `apiEndpoint` variable in the variables file, and add `/event` to the end
 
-### 6. Load up the NodeMCU ESP8266
+### 6. Flash the NodeMCU Lua firmware
+1. Download and install the [USB to UART drivers from Silicon Labs](http://www.silabs.com/products/mcu/pages/usbtouartbridgevcpdrivers.aspx)
+1. The [firmware](firmware/nodemcu-master-9-modules-2017-01-15-08-48-34-integer.bin) contained in this repo is a recent build from https://nodemcu-build.com/ with following packages: `file`, `GPIO`, `HTTP`, `net`, `node`, `timer`, `UART`, `WiFi` and `TLS/SSL support`. This firmware is on SDK version 1.5.4.1. Between the time that I did this project and wrote up this README, the NodeMCU firmware team has released a 2.0.0 firmware, which some have reported problems with my lua code. I have not had time yet to debug these issues, so for now I suggest using this slighly older firmware (from Jan 15, 2017) version.
+1. I used [esptool.py](https://github.com/espressif/esptool) to flash the firmware (I'm using a Mac). There's pretty good [documentation here](https://nodemcu.readthedocs.io/en/master/en/flash/) including a couple other options for Windows users.
+1. The exact command I used to flash the firmware is:
+  
+  `./esptool.py --port=/dev/cu.SLAB_USBtoUART write_flash 0x00000 firmware/nodemcu-master-9-modules-2017-01-15-08-48-34-integer.bin`
+
+  Your port may vary depending on your platform (I'm using a Mac)
+ 
+### 7. Load up the NodeMCU ESP8266
 
 1. Download [Esplorer](https://esp8266.ru/esplorer/). It's a cross-platform IDE for interacting with the NodeMCU. _Very_ handy.
-1. Download and install the [USB to UART drivers from Silicon Labs](http://www.silabs.com/products/mcu/pages/usbtouartbridgevcpdrivers.aspx)
 1. Plug a microUSB cable into the NodeMCU and the other end into your computer, open up Esplorer, select the USBtoUART from the serial port chooser, set the baud rate to 115200, and click Open to connect. You may need to click the RTS button a couple times to connect and see something like this:
 
   ![](screenshots/ESPlorer v0.2.0-rc5 by 4refr0nt 2017-02-06 22-58-30.png)
