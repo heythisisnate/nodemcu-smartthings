@@ -5,15 +5,9 @@ globalHeaders = "Host: " .. apiHost .. "\r\nAuthorization: Bearer " .. auth_toke
 -- Iterate through each configured sensor (from variables.lua) and set up trigger on its corresponding pin
 for i,sensor in pairs(sensors) do
   gpio.mode(sensor.gpioPin, gpio.INPUT, gpio.PULLUP)
-  sensor.state = gpio.read(sensor.gpioPin)
-
   gpio.trig(sensor.gpioPin, "both", function (level)
-    local newState = gpio.read(sensor.gpioPin)
-    if sensor.state ~= newState then
-      sensor.state = newState
-      print(sensor.name .. " pin is " .. sensor.state)
-      queueRequest(sensor.deviceId, sensor.state)
-    end
+    print(sensor.name .. " pin is " .. level)
+    queueRequest(sensor.deviceId, level)
   end)
 
   print("Listening for " .. sensor.name .. " on pin D" .. sensor.gpioPin)

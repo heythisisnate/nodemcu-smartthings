@@ -14,6 +14,6 @@ sensors[2] = {
 }
 sensors[3] = {
 	name = "Motion Sensor",
-	deviceId = "88888888-cccc-dddd-5555-eeeeeeeeeeee",,
+	deviceId = "88888888-cccc-dddd-5555-eeeeeeeeeeee",
 	gpioPin = 2
 }

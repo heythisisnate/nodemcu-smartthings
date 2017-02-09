@@ -29,8 +29,8 @@ definition(
 
 preferences {
 	section("Select devices to monitor") {
-  	input "contactSensors", "capability.contactSensor", multiple:true
-    input "motionSensors", "capability.motionSensor", multiple:true
+  	input "contactSensors", "capability.contactSensor", multiple:true, required:false
+    input "motionSensors", "capability.motionSensor", multiple:true, required:false
 	}
 }
 
