@@ -140,3 +140,4 @@ The OAuth token is used to sign HTTP requests from the NodeMCU to the SmartApp y
 1. Now go around your house testing it out!
 1. Once everything is working properly, you can plug the NodeMCU into a standard USB power adapter and it will automatically boot up, connect to WiFi, and start listening for switches.
 
+[![Analytics](https://ga-beacon.appspot.com/UA-XXXXX-X/nodemcu-smartthings-sensors)](https://ga-beacon.appspot.com/UA-641236-8/nodemcu-smartthings-sensors)
