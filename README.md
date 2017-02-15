@@ -15,7 +15,7 @@ The house I live in was built in the early 90s and came with a built-in home sec
 1. A NodeMCU development board. [This is the one I bought on Amazon](https://www.amazon.com/gp/product/B010O1G1ES/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B010O1G1ES&linkCode=as2&tag=heythisisnate-20&linkId=2234c680df64af67b74eb313b8ca82df) for about $8 with Prime shipping. 
 1. A [basic breadboard](https://www.amazon.com/gp/search/ref=as_li_qf_sp_sr_il_tl?ie=UTF8&tag=heythisisnate-20&keywords=B01N12ZULY&index=aps&camp=1789&creative=9325&linkCode=xm2&linkId=ea15eee83d4897e13cfab03e3ffea1b3).
 1. Some [extra wires of various male/female combinations](https://www.amazon.com/gp/product/B01FSGGJLY/ref=as_li_tl?ie=UTF8&tag=heythisisnate-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B01FSGGJLY&linkId=c23cd9573b73d437a52781fee10722e6).
-1. A micro USB cable and power adapter
+1. A [microUSB power supply](https://www.amazon.com/gp/product/B00GF9T3I0/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&tag=heythisisnate-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B00GF9T3I0&linkId=72fc777b3abc63d2c2b86d1ff1343e18) or try one of these [other ways to power the device](http://henrysbench.capnfatz.com/henrys-bench/arduino-projects-tips-and-more/powering-the-esp-12e-nodemcu-development-board/)
 
 _Update:_ Later on I saw [this NodeMCU board with a base](https://www.amazon.com/gp/product/B01MDTKAR2/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&tag=heythisisnate-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B01MDTKAR2&linkId=f5b8649950c46c0644e88dfbace7567d) that looks like it eliminates the need for a breadboard. And [this kit](https://www.amazon.com/gp/product/B01N3KO7QV/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&tag=heythisisnate-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B01N3KO7QV&linkId=d4335e6ef6331d73be4fa83bf3cfc338) also includes 40 jumper cables making it an attractive all-in-one starter set.
 
@@ -36,7 +36,7 @@ _Update 2:_ One user reported that he had success with [this board](https://www.
 1. Copy or rename `variables.lua.example` to `variables.lua`
 1. Copy or rename `credentials.lua.example` to `credentials.lua`
 1. Open up `credentials.lua` in your favorite text editor and put in your WiFi SSID and password
-1. Also open up `variables.lua`. We'll be completing this out as we set up things in SmartThings.
+1. Also open up `variables.lua`. We'll be completing this as we set up things in SmartThings.
 
 ### 2. Create Device Handler(s) in SmartThings
 
@@ -88,7 +88,7 @@ The OAuth token is used to sign HTTP requests from the NodeMCU to the SmartApp y
 
    ![](screenshots/localhost 2017-02-05 22-24-28.png)
 
-1. Now that you've got the code, it's time to make a POST request to get the access token. For this I like to use tools [Advanced REST Client Chrome app](https://chrome.google.com/webstore/detail/advanced-rest-client/hgmloofddffdnphfgcellkdfbfbjeloo?hl=en-US). You can use any tool that can create a POST request with form parameters. Just fill in [the fields](http://docs.smartthings.com/en/latest/smartapp-web-services-developers-guide/authorization.html#get-access-token) as shown:
+1. Now that you've got the code, it's time to make a POST request to get the access token. For this I like to use [Advanced REST Client Chrome app](https://chrome.google.com/webstore/detail/advanced-rest-client/hgmloofddffdnphfgcellkdfbfbjeloo?hl=en-US). You can use any tool that can create a POST request with form parameters. Just fill in [the fields](http://docs.smartthings.com/en/latest/smartapp-web-services-developers-guide/authorization.html#get-access-token) as shown:
 
   ![](screenshots/Advanced REST client 2017-02-05 22-09-03.png)
 
@@ -139,5 +139,9 @@ The OAuth token is used to sign HTTP requests from the NodeMCU to the SmartApp y
 1. Open up your alarm panel and find the cluster of wires coming from the switches throughout your house. Hopefully they're labeled well, otherwise you'll have some testing to do. Using some jumper cables, connect each pair of wires from each switch to the corresponding pin and ground on the board.
 1. Now go around your house testing it out!
 1. Once everything is working properly, you can plug the NodeMCU into a standard USB power adapter and it will automatically boot up, connect to WiFi, and start listening for switches.
+
+## Problems or Questions
+
+Please [open an issue](https://github.com/heythisisnate/nodemcu-smartthings-sensors/issues) if you run into problems or have feature requests. You can also [join the discussion on SmartThings community](https://community.smartthings.com/t/connect-wired-alarm-system-sensors-to-smartthings-with-a-nodemcu-esp8266/76010)
 
 [![Analytics](https://ga-beacon.appspot.com/UA-XXXXX-X/nodemcu-smartthings-sensors)](https://ga-beacon.appspot.com/UA-641236-8/nodemcu-smartthings-sensors)
