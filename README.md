@@ -13,7 +13,7 @@ The house I live in was built in the early 90s and came with a built-in home sec
 ### Materials
 
 1. A NodeMCU development board. [This is the one I bought on Amazon](https://www.amazon.com/gp/product/B010O1G1ES/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B010O1G1ES&linkCode=as2&tag=heythisisnate-20&linkId=2234c680df64af67b74eb313b8ca82df) for about $8 with Prime shipping. 
-1. A [basic breadboard](https://www.amazon.com/gp/search/ref=as_li_qf_sp_sr_il_tl?ie=UTF8&tag=heythisisnate-20&keywords=B01N12ZULY&index=aps&camp=1789&creative=9325&linkCode=xm2&linkId=ea15eee83d4897e13cfab03e3ffea1b3).
+1. A [basic breadboard](https://www.amazon.com/gp/product/B00WZSSDCW/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&tag=heythisisnate-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B00WZSSDCW&linkId=9d7c5cb3d9c1dde81a0789567f296c78) or [3-pack](https://www.amazon.com/gp/search/ref=as_li_qf_sp_sr_il_tl?ie=UTF8&tag=heythisisnate-20&keywords=B01N12ZULY&index=aps&camp=1789&creative=9325&linkCode=xm2&linkId=ea15eee83d4897e13cfab03e3ffea1b3).
 1. Some [extra wires of various male/female combinations](https://www.amazon.com/gp/product/B01FSGGJLY/ref=as_li_tl?ie=UTF8&tag=heythisisnate-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B01FSGGJLY&linkId=c23cd9573b73d437a52781fee10722e6).
 1. A [microUSB power supply](https://www.amazon.com/gp/product/B00GF9T3I0/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&tag=heythisisnate-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B00GF9T3I0&linkId=72fc777b3abc63d2c2b86d1ff1343e18) or try one of these [other ways to power the device](http://henrysbench.capnfatz.com/henrys-bench/arduino-projects-tips-and-more/powering-the-esp-12e-nodemcu-development-board/)
 
@@ -43,8 +43,9 @@ _Update 2:_ One user reported that he had success with [this board](https://www.
 1. Log in to the [SmartThings IDE](https://graph.api.smartthings.com) -> My Locations -> click on your location
 1. Go to My Device Handlers -> Create New Device Handler
 1. Click the _From Code_ tab and paste the content of one of the device handlers and save:
-  * [NodeMCU Connected Contact Sensor](https://raw.githubusercontent.com/heythisisnate/SmartThingsPublic/master/devicetypes/heythisisnate/nodemcu-connected-contact-sensor.src/nodemcu-connected-contact-sensor.groovy)
-  * [NodeMCU Connected Motion Sensor](https://raw.githubusercontent.com/heythisisnate/SmartThingsPublic/master/devicetypes/heythisisnate/nodemcu-connected-motion-sensor.src/nodemcu-connected-motion-sensor.groovy)
+  * [NodeMCU Connected Contact Sensor](https://raw.githubusercontent.com/heythisisnate/nodemcu-smartthings-sensors/master/SmartThings/DeviceHandlers/nodemcu-connected-contact-sensor.groovy)
+  * [NodeMCU Connected Motion Sensor](https://raw.githubusercontent.com/heythisisnate/nodemcu-smartthings-sensors/master/SmartThings/DeviceHandlers/nodemcu-connected-motion-sensor.groovy)
+  * [NodeMCU Connected Smoke Detector](https://raw.githubusercontent.com/heythisisnate/nodemcu-smartthings-sensors/master/SmartThings/DeviceHandlers/nodemcu-connected-smoke-detector.groovy)
 1. Click Publish -> For Me
 1. Repeat for the other device handler if you need both types
 
@@ -65,7 +66,7 @@ The SmartApp receives data from your NodeMCU device, and updates the status of y
 
 1. Go to My SmartApps -> New SmartApp
 1. Click the _From Code_ tab and paste the content of the SmartApp:
-  * [Cloud Sensor](https://raw.githubusercontent.com/heythisisnate/SmartThingsPublic/master/smartapps/heythisisnate/cloud-sensor.src/cloud-sensor.groovy)
+  * [Cloud Sensor](https://raw.githubusercontent.com/heythisisnate/nodemcu-smartthings-sensors/master/SmartThings/cloud-sensor.groovy)
 1. Once the SmartApp is created, click the edit icon or go to App Settings -> OAuth and enable OAuth and save.
 1. Make note of the OAuth Client ID and Client Secret, you'll need these later.
 1. Click Publish -> For Me
