@@ -116,7 +116,7 @@ The OAuth token is used to sign HTTP requests from the NodeMCU to the SmartApp y
 1. I used [esptool.py](https://github.com/espressif/esptool) to flash the firmware (I'm using a Mac). There's pretty good [documentation here](https://nodemcu.readthedocs.io/en/master/en/flash/) including a couple other options for Windows users.
 1. The exact command I used to flash the firmware is:
   
-  `./esptool.py --port=/dev/cu.SLAB_USBtoUART write_flash 0x00000 firmware/nodemcu-master-9-modules-2017-01-15-08-48-34-integer.bin`
+  `esptool.py --port=/dev/cu.SLAB_USBtoUART write_flash --flash_mode dio 0x00000 firmware/nodemcu-master-9-modules-2017-01-15-08-48-34-integer.bin`
 
   Your port may vary depending on your platform (I'm using a Mac)
  
