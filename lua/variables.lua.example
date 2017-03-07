@@ -1,6 +1,18 @@
-apiHost     = "https://graph-na02-useast1.api.smartthings.com"    
+--
+-- VARIABLES & OPTIONS
+--
+
+-- The `apiHost` and `apiEndpoint` can be obtained by doing an authenticated API call
+-- to `https://graph.api.smartthings.com/api/smartapps/endpoints`. See the README for more details.
+apiHost     = "https://graph-na02-useast1.api.smartthings.com"
 apiEndpoint = "/api/smartapps/installations/88888888-cccc-dddd-55555-44444444444/event"
 
+-- Set `report_on_startup` to true to report the status of each sensor to SmartThings upon startup.
+-- When false, the program will only report when the sensor state changes.
+report_on_startup = true
+
+-- `sensors` is a table of the sensor devices, their SmartThings device IDs and their corresponding pin on
+-- the ESP8266 board. The pins are labeled with a `D` followed by a number. Only specify the numerical part as the `gpioPin`.
 sensors = {}
 sensors[1] = {
 	name = "Front Door",
