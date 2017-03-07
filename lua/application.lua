@@ -15,8 +15,13 @@ requestQueue = {}
 --
 
 -- Inserts a request to the end of the queue
-function queueRequest(sensorId, value)
+function queueRequest(sensorId, value, updateLanIp)
   local requestData = { sensorId = sensorId, value = value }
+
+  if updateLanIp then
+    requestData.lanIp = wifi.sta.getip()
+  end
+
   table.insert(requestQueue, requestData)
 end
 
@@ -24,9 +29,18 @@ end
 function doNextRequest()
   local sensorData = requestQueue[1]
   if sensorData then
-      local payload = [[{"sensor_id":"]] .. sensorData.sensorId .. [[","state":]] .. sensorData.value .. "}"
+
+      -- manually construct the JSON payload
+      local payload = [[{"sensor_id":"]] .. sensorData.sensorId .. [[","state":]] .. sensorData.value
+      if sensorData.lanIp then
+        payload = payload .. [[,"lan_ip":"]] .. sensorData.lanIp .. [["]]
+      end
+      payload = payload .. "}"
+
+      -- set http headers
       local headers = globalHeaders .. "Content-Length: " .. string.len(payload) .. "\r\n"
 
+      -- do the POST to SmartThings
       http.post(
         apiHost .. apiEndpoint,
         headers,
@@ -51,7 +65,7 @@ for i,sensor in pairs(sensors) do
   gpio.mode(sensor.gpioPin, gpio.INPUT, gpio.PULLUP)
   sensor.state = gpio.read(sensor.gpioPin)
   if report_on_startup then
-    queueRequest(sensor.deviceId, sensor.state)
+    queueRequest(sensor.deviceId, sensor.state, true)
   end
   
   gpio.trig(sensor.gpioPin, "both", function (level)

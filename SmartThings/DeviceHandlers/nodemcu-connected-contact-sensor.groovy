@@ -21,8 +21,10 @@ metadata {
   definition (name: "NodeMCU Connected Contact Sensor", namespace: "heythisisnate", author: "Nate") {
     capability "Contact Sensor"
     capability "Sensor"
+    attribute "lanIp", "string"
     command "open"
     command "close"
+    command "updateLanIp"
   }
 
   tiles {
@@ -42,4 +44,8 @@ def open() {
 
 def close() {
   sendEvent(name: "contact", value: "closed")
+}
+
+def updateLanIp(value) {
+  sendEvent(name: "lanIp", value: value)
 }

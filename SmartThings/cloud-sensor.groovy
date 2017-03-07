@@ -46,6 +46,7 @@ mappings {
 def handle_event() {
   def event = request.JSON
   def sensor_id = event.sensor_id
+  def lan_ip = event.lan_ip
   def allSensors = contactSensors + motionSensors + smokeDetectors
   def device = allSensors.find { 
     sensor_id == it.id
@@ -59,6 +60,9 @@ def handle_event() {
     case 1: device.open(); break;
     default: httpError(500, "Unknown device state " + event.state);
   }
+
+  if(lan_ip)
+    device.updateLanIp(lan_ip)
 
   log.trace "Updated " + device + " to " + event.state
   
