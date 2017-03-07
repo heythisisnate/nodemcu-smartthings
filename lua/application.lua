@@ -1,25 +1,18 @@
+--
+-- SETUP
+--
+
 require "variables"
 
-globalHeaders = "Host: " .. apiHost .. "\r\nAuthorization: Bearer " .. auth_token .. "\r\nContent-Type: application/json\r\n"
-
--- Iterate through each configured sensor (from variables.lua) and set up trigger on its corresponding pin
-for i,sensor in pairs(sensors) do
-  gpio.mode(sensor.gpioPin, gpio.INPUT, gpio.PULLUP)
-  sensor.state = gpio.read(sensor.gpioPin)
-  
-  gpio.trig(sensor.gpioPin, "both", function (level)
-    local newState = gpio.read(sensor.gpioPin)
-    if sensor.state ~= newState then
-      sensor.state = newState
-      print(sensor.name .. " pin is " .. newState)
-      queueRequest(sensor.deviceId, newState)
-     end 
-  end)
-
-  print("Listening for " .. sensor.name .. " on pin D" .. sensor.gpioPin)
-end
-
+-- set up application variables
+globalHeaders = "Host: " .. apiHost .. "\r\n"
+globalHeaders = globalHeaders .. "Authorization: Bearer " .. auth_token .. "\r\n"
+globalHeaders = globalHeaders .. "Content-Type: application/json\r\n"
 requestQueue = {}
+
+--
+-- GLOBAL FUNCTIONS
+--
 
 -- Inserts a request to the end of the queue
 function queueRequest(sensorId, value)
@@ -33,10 +26,10 @@ function doNextRequest()
   if sensorData then
       local payload = [[{"sensor_id":"]] .. sensorData.sensorId .. [[","state":]] .. sensorData.value .. "}"
       local headers = globalHeaders .. "Content-Length: " .. string.len(payload) .. "\r\n"
-      
+
       http.post(
         apiHost .. apiEndpoint,
-        headers, 
+        headers,
         payload,
           function(code, data)
             if code == 201 then
@@ -47,6 +40,30 @@ function doNextRequest()
             end
           end)
   end
+end
+
+--
+-- MAIN LOGIC
+--
+
+-- Iterate through each configured sensor (from variables.lua) and set up trigger on its corresponding pin
+for i,sensor in pairs(sensors) do
+  gpio.mode(sensor.gpioPin, gpio.INPUT, gpio.PULLUP)
+  sensor.state = gpio.read(sensor.gpioPin)
+  if report_on_startup then
+    queueRequest(sensor.deviceId, sensor.state)
+  end
+  
+  gpio.trig(sensor.gpioPin, "both", function (level)
+    local newState = gpio.read(sensor.gpioPin)
+    if sensor.state ~= newState then
+      sensor.state = newState
+      print(sensor.name .. " pin is " .. newState)
+      queueRequest(sensor.deviceId, newState)
+     end 
+  end)
+
+  print("Listening for " .. sensor.name .. " on pin D" .. sensor.gpioPin)
 end
 
 -- Process the request queue once every second, taking the next request from the front of the queue.

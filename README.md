@@ -28,6 +28,20 @@ _Update 2:_ One user reported that he had success with [this board](https://www.
 | ![](pics/20170129_104032_sm.jpg) | ![](pics/20170129_102807_sm.jpg) | ![](pics/Screenshot_20170129-233727.png) |
 |  I opened up the alarm panel and rerouted the wires for the sensors to the NodeMCU resting on top | Closeup of the NodeMcu | Devices in SmartThings |
 
+## Updates
+
+##### v1.2 / 2017-03-06
+
+_Feature:_ Reports the status of each sensor upon startup.
+
+##### v1.1 / 2017-02-18
+
+_Feature:_ Support for wired smoke detectors.
+
+##### v1.0 / 2017-02-09
+
+Initial release.
+
 ## Step by Step Setup Guide
 
 ### 1. Getting Started
