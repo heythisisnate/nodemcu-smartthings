@@ -21,9 +21,11 @@ metadata {
   definition (name: "NodeMCU Connected Smoke Detector", namespace: "heythisisnate", author: "Nate") {
     capability "Smoke Detector"
     attribute "lanIp", "string"
+    attribute "mac", "string"
     command "open"
     command "close"
     command "updateLanIp"
+    command "updateMac"
   }
 
   tiles {
@@ -47,4 +49,8 @@ def close() {
 
 def updateLanIp(value) {
   sendEvent(name: "lanIp", value: value)
+}
+
+def updateMac(value) {
+  sendEvent(name: "mac", value: value)
 }

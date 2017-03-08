@@ -15,11 +15,12 @@ requestQueue = {}
 --
 
 -- Inserts a request to the end of the queue
-function queueRequest(sensorId, value, updateLanIp)
+function queueRequest(sensorId, value, onStartup)
   local requestData = { sensorId = sensorId, value = value }
 
-  if updateLanIp then
+  if onStartup then
     requestData.lanIp = wifi.sta.getip()
+    requestData.mac = wifi.sta.getmac()
   end
 
   table.insert(requestQueue, requestData)
@@ -34,6 +35,9 @@ function doNextRequest()
       local payload = [[{"sensor_id":"]] .. sensorData.sensorId .. [[","state":]] .. sensorData.value
       if sensorData.lanIp then
         payload = payload .. [[,"lan_ip":"]] .. sensorData.lanIp .. [["]]
+      end
+      if sensorData.mac then
+        payload = payload .. [[,"mac":"]] .. sensorData.mac .. [["]]
       end
       payload = payload .. "}"
 
