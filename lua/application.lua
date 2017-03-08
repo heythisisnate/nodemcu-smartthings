@@ -10,9 +10,21 @@ globalHeaders = globalHeaders .. "Authorization: Bearer " .. auth_token .. "\r\n
 globalHeaders = globalHeaders .. "Content-Type: application/json\r\n"
 requestQueue = {}
 
+if blink_led then
+  led_pin = 4
+  gpio.mode(led_pin, gpio.OUTPUT)
+end
 --
 -- GLOBAL FUNCTIONS
 --
+
+-- Blink the onboard LED
+function blinkLed()
+  gpio.write(led_pin, gpio.LOW)
+  tmr.create():alarm(100, tmr.ALARM_SINGLE, function()
+    gpio.write(led_pin, gpio.HIGH)
+  end)
+end
 
 -- Inserts a request to the end of the queue
 function queueRequest(sensorId, value, onStartup)
@@ -53,6 +65,7 @@ function doNextRequest()
             if code == 201 then
               print("Success: " .. sensorData.sensorId .. " = " .. sensorData.value)
               table.remove(requestQueue, 1) -- remove from the queue when successful
+              if blink_led then blinkLed() end
             elseif code > 201 then
               print("Error " .. code .. " posting " .. sensorData.sensorId .. ", retrying")
             end
