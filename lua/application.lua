@@ -81,10 +81,8 @@ end
 for i,sensor in pairs(sensors) do
   gpio.mode(sensor.gpioPin, gpio.INPUT, gpio.PULLUP)
   sensor.state = gpio.read(sensor.gpioPin)
-  if report_on_startup then
-    queueRequest(sensor.deviceId, sensor.state, true)
-  end
-  
+  queueRequest(sensor.deviceId, sensor.state, true)
+
   gpio.trig(sensor.gpioPin, "both", function (level)
     local newState = gpio.read(sensor.gpioPin)
     if sensor.state ~= newState then
