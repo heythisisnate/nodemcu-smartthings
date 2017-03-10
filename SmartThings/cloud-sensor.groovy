@@ -50,8 +50,9 @@ def handle_event() {
     event.sensor_id == it.id
   }
   
-  if(device == null)
+  if (device == null) {
     httpError(501, "Unknown device " + event.sensor_id)
+  }
   
   switch (event.state) {
     case 0: device.close(); break;
@@ -59,15 +60,12 @@ def handle_event() {
     default: httpError(500, "Unknown device state " + event.state);
   }
 
-  log.trace "Updated " + device + " to " + event.state
+  log.debug "Updated " + device + " to " + event.state
 
-  if(event.lan_ip)
+  if (event.lan_ip) {
     device.updateLanIp(event.lan_ip)
-    log.trace "Updated " + device + " LAN IP to " + event.lan_ip
-
-  if(event.mac)
-    device.updateMac(event.mac)
-    log.trace "Updated " + device + " MAC address to " + event.mac
+    log.debug "Updated " + device + " LAN IP to " + event.lan_ip
+  }
 
   return [ "success": true ]
 }

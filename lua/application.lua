@@ -3,6 +3,7 @@
 --
 
 require "variables"
+require "server"
 
 -- set up application variables
 globalHeaders = "Host: " .. apiHost .. "\r\n"
@@ -38,21 +39,23 @@ function queueRequest(sensorId, value, onStartup)
   table.insert(requestQueue, requestData)
 end
 
+function jsonPayload(sensorData)
+  local payload = [[{"sensor_id":"]] .. sensorData.sensorId .. [[","state":]] .. sensorData.value
+  if sensorData.lanIp then
+    payload = payload .. [[,"lan_ip":"]] .. sensorData.lanIp .. [["]]
+  end
+  if sensorData.mac then
+    payload = payload .. [[,"mac":"]] .. sensorData.mac .. [["]]
+  end
+  payload = payload .. "}"
+  return payload
+end
+
 -- Constructs a POST request to SmartThings to change the state of a sensor
 function doNextRequest()
   local sensorData = requestQueue[1]
   if sensorData then
-
-      -- manually construct the JSON payload
-      local payload = [[{"sensor_id":"]] .. sensorData.sensorId .. [[","state":]] .. sensorData.value
-      if sensorData.lanIp then
-        payload = payload .. [[,"lan_ip":"]] .. sensorData.lanIp .. [["]]
-      end
-      if sensorData.mac then
-        payload = payload .. [[,"mac":"]] .. sensorData.mac .. [["]]
-      end
-      payload = payload .. "}"
-
+      local payload = jsonPayload(sensorData)
       -- set http headers
       local headers = globalHeaders .. "Content-Length: " .. string.len(payload) .. "\r\n"
 
@@ -73,37 +76,6 @@ function doNextRequest()
   end
 end
 
-function processRequest(connection, request)
-  print(request)
-
-  -- iterate through each line in the request payload and construct a table
-  local requestObject = {}
-  -- for line in string.gmatch(request, '[^\n]+') do print(line) end
-
-  requestObject.method, requestObject.path = string.match(request, '^(%u+) (/[%w%p]*)')
-
-  local response = {}
-  response[1] = "<h1>Hi There</h1>\n"
-  response[2] = "<h2>" .. requestObject.method .. " " .. requestObject.path .. "</h2>\n"
-
-  -- sends and removes the first element from the 'response' table
-  local function send(localSocket)
-    if #response > 0 then
-      localSocket:send(table.remove(response, 1))
-    else
-      localSocket:close()
-      response = nil
-    end
-  end
-
-  -- triggers the send() function again once the first chunk of data was sent
-  connection:on("sent", send)
-  send(connection)
-end
-
-function getPath(request)
-
-end
 
 --
 -- MAIN LOGIC
@@ -132,9 +104,3 @@ end
 -- retry on the next cycle.
 -- This throttles the HTTP calls to SmartThings in an attempt to prevent timeouts
 tmr.create():alarm(1000, tmr.ALARM_AUTO, doNextRequest)
-
--- create an API endpoint for the SmartThings hub to refresh state
-http_server = net.createServer(net.TCP)
-http_server:listen(80, function(connection)
-  connection:on("receive", processRequest)
-end)

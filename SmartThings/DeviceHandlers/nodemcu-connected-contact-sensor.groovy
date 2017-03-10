@@ -21,12 +21,10 @@ metadata {
   definition (name: "NodeMCU Connected Contact Sensor", namespace: "heythisisnate", author: "Nate") {
     capability "Contact Sensor"
     capability "Sensor"
-    attribute "lanIp", "string"
-    attribute "mac", "string"
+    capability "Refresh"
     command "open"
     command "close"
     command "updateLanIp"
-    command "updateMac"
   }
 
   tiles {
@@ -35,9 +33,18 @@ metadata {
       state "closed", label: '${name}', icon: "st.contact.contact.closed", backgroundColor: "#79b821"
     }
 
+    standardTile("refresh", "device.contact", width: 1, height: 1, decoration: "flat") {
+      state "default", label: '', action:"refresh.refresh",
+      icon:"st.secondary.refresh"
+    }
+
     main "contact"
-    details "contact"
+    details(["contact","refresh"])
   }
+}
+
+def parse(String data) {
+  log.debug data
 }
 
 def open() {
@@ -49,9 +56,43 @@ def close() {
 }
 
 def updateLanIp(value) {
-  sendEvent(name: "lanIp", value: value)
+  device.deviceNetworkId = ipToHex(value + ":80")
 }
 
-def updateMac(value) {
-  sendEvent(name: "mac", value: value)
+def refresh() {
+  def result = new physicalgraph.device.HubAction(
+    method: "GET",
+    path: "/" + device.id,
+    headers: [
+      HOST: hexToIp(device.deviceNetworkId)
+    ]
+  )
+  return result
+}
+
+// accepts a IP:PORT string and converts it to a hex identifier
+// for setting the SmartThings deviceNetworkId
+private String ipToHex(String ip) {
+  def parts 	= ip.tokenize(':')
+  def address = parts[0]
+  def port 		= parts[1]
+  def octets 	= address.tokenize('.')
+  def hex 		= ""
+
+  octets.each {
+    hex = hex + Integer.toHexString(it as Integer).toUpperCase()
+  }
+  hex = hex + ":" + Integer.toHexString(port as Integer).toUpperCase().padLeft(4,'0')
+  return hex
+}
+
+private Integer hexToInt(String hex) {
+  return Integer.parseInt(hex,16)
+}
+
+// accepts a hex formatted deviceNetworkId and converts it to an IP:PORT string
+private String hexToIp(String hex) {
+  def address = [hexToInt(hex[0..1]), hexToInt(hex[2..3]), hexToInt(hex[4..5]), hexToInt(hex[6..7])].join(".")
+  def port = hexToInt(hex[9..12])
+  return address + ":" + port
 }
