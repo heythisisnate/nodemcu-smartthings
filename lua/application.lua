@@ -3,7 +3,6 @@
 --
 
 require "variables"
-require "server"
 
 -- set up application variables
 globalHeaders = "Host: " .. apiHost .. "\r\n"

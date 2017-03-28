@@ -1,15 +1,16 @@
+-- Process an incoming HTTP request
 function processRequest(connection, request)
 
   -- iterate through each line in the request payload and construct a table
   local requestObject = {}
   -- for line in string.gmatch(request, '[^\n]+') do print(line) end
-
   requestObject.method, requestObject.path = string.match(request, '^(%u+) (/[%w%p]*)')
-  print(requestObject.method, requestObject.path)
+  requestObject.host, requestObject.port = string.match(request, '[Hh][Oo][Ss][Tt]: ([%w%p]*):(%d+)')
+  print(requestObject.host .. ":" ..requestObject.port, requestObject.method, requestObject.path)
 
-  local function findSensor(byId)
+  local function findSensor(byPin)
     for i, sensor in pairs(sensors) do
-      if sensor.deviceId == byId then
+      if sensor.gpioPin == byPin then
         return sensor
       end
     end
@@ -19,9 +20,8 @@ function processRequest(connection, request)
   local response_code
 
   if requestObject.method == 'GET' then
-    lookup = string.match(requestObject.path, '/(%w.+)')
-    device = findSensor(lookup)
-
+    local gpioPin = requestObject.port - 3000
+    local device = findSensor(gpioPin)
 
     if device == nil then
       response_code = "404 NOT FOUND"
@@ -55,8 +55,14 @@ function processRequest(connection, request)
   send(connection)
 end
 
--- create an API endpoint for the SmartThings hub to refresh state
-http_server = net.createServer(net.TCP)
-http_server:listen(80, function(connection)
-  connection:on("receive", processRequest)
-end)
+-- create a separate listner for each sensor by using a unique port
+-- this allows SmartThings to have a unique DeviceNetworkID for each device
+http_servers = {}
+for i,sensor in pairs(sensors) do
+  http_servers[i] = net.createServer(net.TCP)
+  local port = 3000 + sensor.gpioPin
+  http_servers[i]:listen(port, function(connection)
+    connection:on("receive", processRequest)
+  end)
+  print(sensor.name .. ": http://" .. wifi.sta.getip() .. ":" .. port)
+end
