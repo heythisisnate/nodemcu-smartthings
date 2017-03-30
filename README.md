@@ -30,6 +30,14 @@ _Update 2:_ One user reported that he had success with [this board](https://www.
 
 ## Updates
 
+##### v1.3 / 2017-03-29
+
+_Feature:_ Blink the onboard LED on successful communication with SmartThings. To enable set `blink_led = true` in
+`variables.lua`
+
+_Feature:_ **Reliable polling**. Configure by setting `poll_interval` in `variables.lua` to a number to indicate the number
+of seconds between polling for sensors that may have gotten out of sync. 
+
 ##### v1.2 / 2017-03-06
 
 _Feature:_ Reports the status of each sensor upon startup.
@@ -97,54 +105,77 @@ The OAuth token is used to sign HTTP requests from the NodeMCU to the SmartApp y
    
 1. You'll see a page like this allowing you to authorize the devices you set up earlier:
 
-   ![](screenshots/none Authorization 2017-02-05 21-59-54.png)
+   ![](screenshots/Authorization2017-02-05-21-59-54.png)
 
 1. Once you click Authorize, you'll be redirect to http://localhost:3000/auth which will error. That's ok! It wasn't supposed to work. All you need is the code out of the URL parameter:
 
-   ![](screenshots/localhost 2017-02-05 22-24-28.png)
+   ![](screenshots/localhost2017-02-05-22-24-28.png)
 
 1. Now that you've got the code, it's time to make a POST request to get the access token. For this I like to use [Advanced REST Client Chrome app](https://chrome.google.com/webstore/detail/advanced-rest-client/hgmloofddffdnphfgcellkdfbfbjeloo?hl=en-US). You can use any tool that can create a POST request with form parameters. Just fill in [the fields](http://docs.smartthings.com/en/latest/smartapp-web-services-developers-guide/authorization.html#get-access-token) as shown:
 
-  ![](screenshots/Advanced REST client 2017-02-05 22-09-03.png)
+  ![](screenshots/ARC2017-02-05-22-09-03.png)
 
 1. Click Send, and with any luck, you'll get a successful response back that contains your access token:
 
-  ![](screenshots/Advanced REST client 2017-02-05 22-11-09.png)
+  ![](screenshots/ARC2017-02-05-22-11-09.png)
 
   Copy this access token into the `credentials.lua` file.
 
 1. Finally, get your SmartApp endpoint by doing a GET request to `https://graph.api.smartthings.com/api/smartapps/endpoints`, signing the request with an `Authorization` header and your token:
   
-  ![](screenshots/Advanced REST client 2017-02-05 22-52-45.png)  
+  ![](screenshots/ARC2017-02-05-22-52-45.png)  
 
 1. Click send and make note of the url data returned:
   
-  ![](screenshots/Advanced REST client 2017-02-05 22-53-21.png)
+  ![](screenshots/ARC2017-02-0522-53-21.png)
 
   Copy the `base_url` field from here into the `apiHost` variable in the variables file
   Copy the `url` field into the `apiEndpoint` variable in the variables file, and add `/event` to the end
 
 ### 6. Flash the NodeMCU Lua firmware
-1. Download and install the [USB to UART drivers from Silicon Labs](http://www.silabs.com/products/mcu/pages/usbtouartbridgevcpdrivers.aspx)
-1. The [firmware](firmware/nodemcu-master-9-modules-2017-01-15-08-48-34-integer.bin) contained in this repo is a recent build from https://nodemcu-build.com/ with following packages: `file`, `GPIO`, `HTTP`, `net`, `node`, `timer`, `UART`, `WiFi` and `TLS/SSL support`. This firmware is on SDK version 1.5.4.1. Between the time that I did this project and wrote up this README, the NodeMCU firmware team has released a 2.0.0 firmware, which some have reported problems with my lua code. I have not had time yet to debug these issues, so for now I suggest using this slighly older firmware (from Jan 15, 2017) version.
-1. I used [esptool.py](https://github.com/espressif/esptool) to flash the firmware (I'm using a Mac). There's pretty good [documentation here](https://nodemcu.readthedocs.io/en/master/en/flash/) including a couple other options for Windows users.
+
+#### Drivers
+
+Windows and Mac users will need to download drivers so your computer can talk to the ESP8266 chip over USB. Depending
+on which board you have, there are different drivers: 
+
+**[Silicon LabsUSB to UART drivers](http://www.silabs.com/products/mcu/pages/usbtouartbridgevcpdrivers.aspx)** for boards that:
+* have the name _Amica_ on the back
+* the small component on the board near the USB port is engraved with SiLABS CP2102
+
+**[WeMos CH340 drivers](https://www.wemos.cc/downloads)** for boards that:
+* have the name _LoLin_ on the back or front
+* the small rectangular component on the board near the USB port is engraved with CH340G
+* **Mac OS X Sierra users**: [use this driver](http://kig.re/2014/12/31/how-to-use-arduino-nano-mini-pro-with-CH340G-on-mac-osx-yosemite.html)
+  
+#### Firmware
+1. The [firmware](firmware/nodemcu-master-9-modules-2017-01-15-08-48-34-integer.bin) contained in this repo is a recent 
+build from https://nodemcu-build.com/ with following packages: `file`, `GPIO`, `HTTP`, `net`, `node`, `timer`, `UART`, 
+`WiFi` and `TLS/SSL support`. This firmware is on SDK version 1.5.4.1. Between the time that I did this project and wrote
+up this README, the NodeMCU firmware team has released a 2.0.0 firmware which has a bug with SSL/TLS and this program 
+doesn't work. Until this is fixed, please use the 1.5.4.1-final branch if you're building your own firmware at https://nodemcu-build.com/.
+More info in https://github.com/nodemcu/nodemcu-firmware/issues/1707.
+
+1. I used [esptool.py](https://github.com/espressif/esptool) to flash the firmware (I'm using a Mac). There's pretty 
+good [documentation here](https://nodemcu.readthedocs.io/en/master/en/flash/) including a couple other options for Windows users.
+
 1. The exact command I used to flash the firmware is:
   
   `esptool.py --port=/dev/cu.SLAB_USBtoUART write_flash --flash_mode dio 0x00000 firmware/nodemcu-master-9-modules-2017-01-15-08-48-34-integer.bin`
 
-  Your port may vary depending on your platform (I'm using a Mac)
+  Your port may vary depending on your platform, OS and UART driver.
  
 ### 7. Load up the NodeMCU ESP8266
 
 1. Download [Esplorer](https://esp8266.ru/esplorer/). It's a cross-platform IDE for interacting with the NodeMCU. _Very_ handy.
 1. Plug a microUSB cable into the NodeMCU and the other end into your computer, open up Esplorer, select the USBtoUART from the serial port chooser, set the baud rate to 115200, and click Open to connect. You may need to click the RTS button a couple times to connect and see something like this:
 
-  ![](screenshots/ESPlorer v0.2.0-rc5 by 4refr0nt 2017-02-06 22-58-30.png)
+  ![](screenshots/ESPlorer2017-02-06-22-58-30.png)
 
 1. Once connected, it's time to upload the code. Click Open in Esplorer and open each of the lua files on your computer and click "Save to ESP". Alternatively, you can use the Upload button to upload them all at once. [This documentation](http://esp8266.ru/download/esp8266-doc/Getting%20Started%20with%20the%20ESPlorer%20IDE%20-%20Rui%20Santos.pdf) was also very helpful in learning how to interact with the device using Esplorer.
 1. After all the code is uploaded, click the Reset button to restart the device. It should boot up, connect to your WiFi and output a message for each configured sensor, like this:
 
-  ![](screenshots/ESPlorer v0.2.0-rc5 by 4refr0nt 2017-02-06 23-02-30.png)
+  ![](screenshots/ESPlorer2017-02-06-23-02-30.png)
 
 1. Now let's test it out! The first sensor in this example is configured on pin 6 (labled D6). Take a wire and connect one end to pin D6 and the other end to the ground (GND). This completes the circuit, setting the pin low or 0, indicating that the contact sensor is closed. Hopefully it worked and you should see a success message in the Esplorer terminal, and when you open your SmartThings app you should see that the door is closed. Now remove the wire and watch it set to open.
 1. _Note about the pins:_ I found that some of the pins don't work very well when normally _low_. It took a lot of trial and error to figure out that pins D1, D2, D6 and D7 worked reliabliy for me. I had problems with D3, D9 and D10. Your mileage may vary.
