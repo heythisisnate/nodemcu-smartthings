@@ -7,9 +7,16 @@
 apiHost     = "https://graph-na02-useast1.api.smartthings.com"
 apiEndpoint = "/api/smartapps/installations/88888888-cccc-dddd-55555-44444444444/event"
 
--- Set `report_on_startup` to true to report the status of each sensor to SmartThings upon startup.
--- When false, the program will only report when the sensor state changes.
-report_on_startup = true
+-- Set `blink_led` to true to blink the blue onboard LED upon successful communication with SmartThings
+-- This is useful for visual confirmation and testing, but I leave it off in production
+-- The onboard LED is tied to pin D4 so you cannot use this pin for other things when enabled
+blink_led = false
+
+-- Set `poll_interval` in seconds to poll each sensor periodically as a _backup_ check. You really shouldn't need
+-- to poll at all, but occasionally people have reported missed open/close events. This will not update SmartThings every
+-- time, only if the state of the sensor is is different from the internal memory state.
+-- Set this to 0 or null to never poll.
+poll_interval = 60
 
 -- `sensors` is a table of the sensor devices, their SmartThings device IDs and their corresponding pin on
 -- the ESP8266 board. The pins are labeled with a `D` followed by a number. Only specify the numerical part as the `gpioPin`.

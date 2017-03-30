@@ -45,14 +45,14 @@ mappings {
 
 def handle_event() {
   def event = request.JSON
-  def sensor_id = event.sensor_id
   def allSensors = contactSensors + motionSensors + smokeDetectors
   def device = allSensors.find { 
-    sensor_id == it.id
+    event.sensor_id == it.id
   }
   
-  if(device == null)
-    httpError(501, "Unknown device " + sensor_id)
+  if (device == null) {
+    httpError(501, "Unknown device " + event.sensor_id)
+  }
   
   switch (event.state) {
     case 0: device.close(); break;
@@ -60,7 +60,7 @@ def handle_event() {
     default: httpError(500, "Unknown device state " + event.state);
   }
 
-  log.trace "Updated " + device + " to " + event.state
-  
+  log.debug "Updated " + device + " to " + event.state
+
   return [ "success": true ]
 }
