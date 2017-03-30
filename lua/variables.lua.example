@@ -36,3 +36,18 @@ sensors[3] = {
 	deviceId = "88888888-cccc-dddd-5555-eeeeeeeeeeee",
 	gpioPin = 2
 }
+
+-- `alarm` is the configuration to connect your alarm system's siren or strobe. SmartThings _Alarm_ capability supports
+-- both siren and strobe states, so you can connect up to two wired devices to two pins on the NodeMCU ESP8266 board,
+-- using a relay to switch a higher voltage device.
+--
+--  `deviceId`  - The SmartThings deviceId of your NodeMCU Connected Alarm device. Set this to `nil` to disable siren/strobe support.
+--  `httpPort`  - The port used for your SmartThings hub to communicate with the built-in HTTP server on the NodeMCU
+--  `sirenPin`  - The pin on the board connected to your siren relay. Set to `nil` to disable.
+--  `strobePin` - The pin on the board connected to your strobe relay. Set to `nil` to disable.
+alarm = {
+  deviceId = nil,
+  httpPort = 8100,
+  sirenPin = 1,
+  strobePin = nil
+}

@@ -14,6 +14,7 @@ if blink_led then
   led_pin = 4
   gpio.mode(led_pin, gpio.OUTPUT)
 end
+
 --
 -- GLOBAL FUNCTIONS
 --
@@ -27,35 +28,32 @@ function blinkLed()
 end
 
 -- Inserts a request to the end of the queue
-function queueRequest(sensorId, value)
-  local requestData = { sensorId = sensorId, value = value }
-  table.insert(requestQueue, requestData)
-end
-
-function jsonPayload(sensorData)
-  return [[{"sensor_id":"]] .. sensorData.sensorId .. [[","state":]] .. sensorData.value .. "}"
+function queueRequest(endpoint, requestData)
+  table.insert(requestQueue, {endpoint, requestData})
 end
 
 -- Constructs a POST request to SmartThings to change the state of a sensor
 function doNextRequest()
-  local sensorData = requestQueue[1]
-  if sensorData then
-      local payload = jsonPayload(sensorData)
+  local requestData = requestQueue[1]
+
+  if requestData then
+      local endpoint = requestData[1]
+      local payload = cjson.encode(requestData[2])
       -- set http headers
       local headers = globalHeaders .. "Content-Length: " .. string.len(payload) .. "\r\n"
 
       -- do the POST to SmartThings
       http.post(
-        apiHost .. apiEndpoint,
+        apiHost .. apiEndpoint .. endpoint,
         headers,
         payload,
           function(code, data)
             if code == 201 then
-              print("Success: " .. sensorData.sensorId .. " = " .. sensorData.value)
+              print("Success: " .. payload)
               table.remove(requestQueue, 1) -- remove from the queue when successful
               if blink_led then blinkLed() end
             elseif code > 201 then
-              print("Error " .. code .. " posting " .. sensorData.sensorId .. ", retrying")
+              print("Error " .. code .. " posting " .. payload .. ", retrying")
             end
           end)
   end
@@ -65,7 +63,7 @@ function updateSensorState(sensor, newState)
   if sensor.state ~= newState then
     sensor.state = newState
     print(sensor.name .. " pin is " .. newState)
-    queueRequest(sensor.deviceId, newState)
+    queueRequest("/event", {sensor_id = sensor.deviceId, state = newState})
   end
 end
 
@@ -82,11 +80,16 @@ end
 -- MAIN LOGIC
 --
 
+-- Load the alarm code if configured
+if alarm and alarm.deviceId then
+  require "alarm"
+end
+
 -- Iterate through each configured sensor (from variables.lua) and set up trigger on its corresponding pin
 for i,sensor in pairs(sensors) do
   gpio.mode(sensor.gpioPin, gpio.INPUT, gpio.PULLUP)
   sensor.state = gpio.read(sensor.gpioPin)
-  queueRequest(sensor.deviceId, sensor.state, true)
+  queueRequest("/event", {sensor_id = sensor.deviceId, state = sensor.state})
 
   gpio.trig(sensor.gpioPin, "both", function (level)
     local newState = gpio.read(sensor.gpioPin)
