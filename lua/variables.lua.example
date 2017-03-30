@@ -7,9 +7,10 @@
 apiHost     = "https://graph-na02-useast1.api.smartthings.com"
 apiEndpoint = "/api/smartapps/installations/88888888-cccc-dddd-55555-44444444444/event"
 
--- Set `report_on_startup` to true to report the status of each sensor to SmartThings upon startup.
--- When false, the program will only report when the sensor state changes.
-report_on_startup = true
+-- Set `blink_led` to true to blink the blue onboard LED upon successful communication with SmartThings
+-- This is useful for visual confirmation and testing, but I leave it off in production
+-- The onboard LED is tied to pin D4 so you cannot use this pin for other things when enabled
+blink_led = false
 
 -- `sensors` is a table of the sensor devices, their SmartThings device IDs and their corresponding pin on
 -- the ESP8266 board. The pins are labeled with a `D` followed by a number. Only specify the numerical part as the `gpioPin`.
