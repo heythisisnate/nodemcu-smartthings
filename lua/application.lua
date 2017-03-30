@@ -61,7 +61,23 @@ function doNextRequest()
   end
 end
 
+function updateSensorState(sensor, newState)
+  if sensor.state ~= newState then
+    sensor.state = newState
+    print(sensor.name .. " pin is " .. newState)
+    queueRequest(sensor.deviceId, newState)
+  end
+end
 
+-- Polls every sensor and updates the state if necessary.
+-- This should only be needed as a backup because normally state changes will trigger instantly by `gpio.trig`
+function pollSensors()
+  for i,sensor in pairs(sensors) do
+    local newState = gpio.read(sensor.gpioPin)
+    print("Polling " .. sensor.name .. ": " .. newState)
+    updateSensorState(sensor, newState)
+  end
+end
 --
 -- MAIN LOGIC
 --
@@ -74,11 +90,7 @@ for i,sensor in pairs(sensors) do
 
   gpio.trig(sensor.gpioPin, "both", function (level)
     local newState = gpio.read(sensor.gpioPin)
-    if sensor.state ~= newState then
-      sensor.state = newState
-      print(sensor.name .. " pin is " .. newState)
-      queueRequest(sensor.deviceId, newState)
-     end 
+    updateSensorState(sensor, newState)
   end)
 
   print("Listening for " .. sensor.name .. " on pin D" .. sensor.gpioPin)
@@ -89,3 +101,9 @@ end
 -- retry on the next cycle.
 -- This throttles the HTTP calls to SmartThings in an attempt to prevent timeouts
 tmr.create():alarm(1000, tmr.ALARM_AUTO, doNextRequest)
+
+-- Poll sensors periodically if configured
+if poll_interval and poll_interval > 0 then
+  local millis = poll_interval * 1000
+  tmr.create():alarm(millis, tmr.ALARM_AUTO, pollSensors)
+end
