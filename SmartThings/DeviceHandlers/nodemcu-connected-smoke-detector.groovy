@@ -2,8 +2,8 @@
  *  NodeMCU Cloud Connected Smoke Detector
  *
  *  Copyright 2017 Nate Clark | @heythisisnate
- *  
- *  A desccription of this project and documentaion can be found at:
+ *
+ *  A description of this project and documentation can be found at:
  *  https://github.com/heythisisnate/nodemcu-smartthings-sensors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -16,7 +16,7 @@
  *  for the specific language governing permissions and limitations under the License.
  *
  */
- 
+
 metadata {
   definition (name: "NodeMCU Connected Smoke Detector", namespace: "heythisisnate", author: "Nate") {
     capability "Smoke Detector"

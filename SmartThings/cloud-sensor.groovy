@@ -32,13 +32,20 @@ preferences {
   	input "contactSensors", "capability.contactSensor", title: "Contact sensors", multiple:true, required:false
     input "motionSensors", "capability.motionSensor", title: "Motion sensors", multiple:true, required:false
     input "smokeDetectors", "capability.smokeDetector", title: "Smoke detectors", multiple:true, required:false
-	}
+    input "alarm", "capability.alarm", title: "Alarm", required:false
+  }
 }
 
 mappings {
   path("/event") {
     action: [
       POST: "handle_event"
+    ]
+  }
+
+  path("/sync") {
+    action: [
+      POST: "sync"
     ]
   }
 }
@@ -64,3 +71,12 @@ def handle_event() {
 
   return [ "success": true ]
 }
+
+def sync() {
+  def sync_data = request.JSON
+  if (sync_data.device_id == alarm.id) {
+    alarm.sync(sync_data.ip, sync_data.port as String, sync_data.mac)
+  }
+  return [ "success": true ]
+}
+
