@@ -140,7 +140,7 @@ The OAuth token is used to sign HTTP requests from the NodeMCU to the SmartApp y
   ![](screenshots/ARC2017-02-0522-53-21.png)
 
   Copy the `base_url` field from here into the `apiHost` variable in the variables file
-  Copy the `url` field into the `apiEndpoint` variable in the variables file, and add `/event` to the end
+  Copy the `url` field into the `apiEndpoint` variable in the variables file
 
 ### 6. Flash the NodeMCU Lua firmware
 
