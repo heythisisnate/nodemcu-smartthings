@@ -118,5 +118,5 @@ if alarm and alarm.httpPort and alarm.deviceId and (alarm.sirenPin or alarm.stro
     connection:on("receive", processRequest)
   end)
 
-  print("Alarm server enabled: http://" .. wifi.sta.getip() .. ":" .. alarm.httpPort .. "/" .. alarm.deviceId .. "/{action}")
+  print("Listening for Alarm commands on HTTP port " .. alarm.httpPort)
 end
