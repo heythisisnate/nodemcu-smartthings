@@ -51,3 +51,10 @@ alarm = {
   sirenPin = 1,
   strobePin = nil
 }
+
+-- `statusServer` is the configuration to host a status page. 
+--
+--  `httpPort`  - The port used to host a status page using the built-in HTTP server on the NodeMCU
+statusServer = {
+  httpPort = 80
+}
