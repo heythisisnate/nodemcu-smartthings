@@ -17,22 +17,22 @@ end
 function alarmAction(action)
   local function both()
     if alarm.sirenPin then gpio.write(alarm.sirenPin, gpio.HIGH) end
-    if alarm.strobePin then gpio.write(alarm.sirenPin, gpio.HIGH) end
+    if alarm.strobePin then gpio.write(alarm.strobePin, gpio.HIGH) end
   end
 
   local function siren()
     if alarm.sirenPin then gpio.write(alarm.sirenPin, gpio.HIGH) end
-    if alarm.strobePin then gpio.write(alarm.sirenPin, gpio.LOW) end
+    if alarm.strobePin then gpio.write(alarm.strobePin, gpio.LOW) end
   end
 
   local function strobe()
     if alarm.sirenPin then gpio.write(alarm.sirenPin, gpio.LOW) end
-    if alarm.strobePin then gpio.write(alarm.sirenPin, gpio.HIGH) end
+    if alarm.strobePin then gpio.write(alarm.strobePin, gpio.HIGH) end
   end
 
   local function off()
     if alarm.sirenPin then gpio.write(alarm.sirenPin, gpio.LOW) end
-    if alarm.strobePin then gpio.write(alarm.sirenPin, gpio.LOW) end
+    if alarm.strobePin then gpio.write(alarm.strobePin, gpio.LOW) end
   end
 
   local actions = {
@@ -54,7 +54,7 @@ function alarmState()
   end
 
   if alarm.strobePin then
-    siren = gpio.read(alarm.strobePin) == gpio.HIGH
+    strobe = gpio.read(alarm.strobePin) == gpio.HIGH
   end
 
   if siren and strobe then return "both" end
