@@ -32,7 +32,7 @@ preferences {
   	input "contactSensors", "capability.contactSensor", title: "Contact sensors", multiple:true, required:false
     input "motionSensors", "capability.motionSensor", title: "Motion sensors", multiple:true, required:false
     input "smokeDetectors", "capability.smokeDetector", title: "Smoke detectors", multiple:true, required:false
-    input "alarm", "capability.alarm", title: "Alarm", required:false
+    input "alarms", "capability.alarm", title: "Alarms", multiple: true, required:false
   }
 }
 
@@ -74,7 +74,10 @@ def handle_event() {
 
 def sync() {
   def sync_data = request.JSON
-  if (sync_data.device_id == alarm.id) {
+  def alarm = alarms.find {
+    sync_data.device_id == it.id
+  }
+  if (alarm) {
     alarm.sync(sync_data.ip, sync_data.port as String, sync_data.mac)
   }
   return [ "success": true ]
