@@ -33,6 +33,7 @@ preferences {
     input "motionSensors", "capability.motionSensor", title: "Motion sensors", multiple:true, required:false
     input "smokeDetectors", "capability.smokeDetector", title: "Smoke detectors", multiple:true, required:false
     input "alarm", "capability.alarm", title: "Alarm", required:false
+    input "switches", "capability.switch", title: "Switch", required:false
   }
 }
 
@@ -53,14 +54,14 @@ mappings {
 def handle_event() {
   def event = request.JSON
   def allSensors = contactSensors + motionSensors + smokeDetectors - null
-  def device = allSensors.find { 
+  def device = allSensors.find {
     event.sensor_id == it.id
   }
-  
+
   if (device == null) {
     httpError(501, "Unknown device " + event.sensor_id)
   }
-  
+
   switch (event.state) {
     case 0: device.close(); break;
     case 1: device.open(); break;
@@ -74,9 +75,11 @@ def handle_event() {
 
 def sync() {
   def sync_data = request.JSON
-  if (sync_data.device_id == alarm.id) {
-    alarm.sync(sync_data.ip, sync_data.port as String, sync_data.mac)
+  def allOutputs = [alarm, switches] - null
+  def device = allOutputs.find {
+    sync_data.device_id == it.id
   }
+  device.sync(sync_data.ip, sync_data.port as String, sync_data.mac)
   return [ "success": true ]
 }
 

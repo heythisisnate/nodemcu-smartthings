@@ -85,6 +85,11 @@ if alarm and alarm.deviceId then
   require "alarm"
 end
 
+-- Load the switch code if configured
+if switch and switch.deviceId and switch.gpioPin then
+  require "switch"
+end
+
 -- Iterate through each configured sensor (from variables.lua) and set up trigger on its corresponding pin
 for i,sensor in pairs(sensors) do
   gpio.mode(sensor.gpioPin, gpio.INPUT, gpio.PULLUP)
