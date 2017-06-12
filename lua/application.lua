@@ -3,6 +3,8 @@
 --
 
 require "variables"
+require "oauth"
+require "server"
 
 -- set up application variables
 globalHeaders = "Host: " .. apiHost .. "\r\n"
@@ -25,6 +27,15 @@ function blinkLed()
   tmr.create():alarm(100, tmr.ALARM_SINGLE, function()
     gpio.write(led_pin, gpio.HIGH)
   end)
+end
+
+function writeCredentials()
+  if file.open('credentials.lua', 'w+') then
+    file.writeline("wifi_ssid = \"" .. wifi_ssid .. "\"")
+    file.writeline("wifi_password = \"" .. wifi_password .. "\"")
+    file.writeline("auth_token = \"" .. auth_token .. "\"")
+    file.close()
+  end
 end
 
 -- Inserts a request to the end of the queue
