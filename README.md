@@ -29,6 +29,17 @@ _Update 2:_ One user reported that he had success with [this board](https://www.
  
 ## Updates
 
+##### v1.6 / 2017-06-12
+
+_Feature:_ Easy OAuth. The application handles the OAuth flow automatically now. Just point your browser 
+to `http://<your-device-ip>:8100/oauth`. See the updated README for details.
+
+_Feature:_ Authorize multiple alarms with the SmartApp.
+
+_Bug Fix:_ Strobe output did not work due to copy/paste bug.
+
+_Bug Fix:_ Fix error in SmartApp when you only have motion sensors authorized.
+
 ##### v1.5 / 2017-04-07
 _Feature:_ Connect a wired siren and/or strobe. Integrates seamlessly with the Smart Home Monitor app.
 
@@ -103,46 +114,7 @@ The SmartApp receives data from your NodeMCU device, and updates the status of y
 1. Make note of the OAuth Client ID and Client Secret, you'll need these later.
 1. Click Publish -> For Me
 
-### 5. Generate an OAuth token
-
-The OAuth token is used to sign HTTP requests from the NodeMCU to the SmartApp you just created. [SmartThings has documentation of this process here.](http://docs.smartthings.com/en/latest/smartapp-web-services-developers-guide/authorization.html). We'll be going through the OAuth flow manually to capture the token which can then be saved on the NodeMCU.
-
-1. Copy and paste the below web address into your browser and replace `YOUR-SMARTAPP-CLIENT-ID` with the OAuth Client ID from the SmartApp created eariler.
-   
-   ```
-   https://graph.api.smartthings.com/oauth/authorize?response_type=code&client_id=YOUR-SMARTAPP-CLIENT-ID&scope=app&redirect_uri=http://localhost:3000/auth
-   ```
-   
-1. You'll see a page like this allowing you to authorize the devices you set up earlier:
-
-   ![](screenshots/Authorization2017-02-05-21-59-54.png)
-
-1. Once you click Authorize, you'll be redirect to http://localhost:3000/auth which will error. That's ok! It wasn't supposed to work. All you need is the code out of the URL parameter:
-
-   ![](screenshots/localhost2017-02-05-22-24-28.png)
-
-1. Now that you've got the code, it's time to make a POST request to get the access token. For this I like to use [Advanced REST Client Chrome app](https://chrome.google.com/webstore/detail/advanced-rest-client/hgmloofddffdnphfgcellkdfbfbjeloo?hl=en-US). You can use any tool that can create a POST request with form parameters. Just fill in [the fields](http://docs.smartthings.com/en/latest/smartapp-web-services-developers-guide/authorization.html#get-access-token) as shown:
-
-  ![](screenshots/ARC2017-02-05-22-09-03.png)
-
-1. Click Send, and with any luck, you'll get a successful response back that contains your access token:
-
-  ![](screenshots/ARC2017-02-05-22-11-09.png)
-
-  Copy this access token into the `credentials.lua` file.
-
-1. Finally, get your SmartApp endpoint by doing a GET request to `https://graph.api.smartthings.com/api/smartapps/endpoints`, signing the request with an `Authorization` header and your token:
-  
-  ![](screenshots/ARC2017-02-05-22-52-45.png)  
-
-1. Click send and make note of the url data returned:
-  
-  ![](screenshots/ARC2017-02-0522-53-21.png)
-
-  Copy the `base_url` field from here into the `apiHost` variable in the variables file
-  Copy the `url` field into the `apiEndpoint` variable in the variables file
-
-### 6. Flash the NodeMCU Lua firmware
+### 5. Flash the NodeMCU Lua firmware
 
 #### Drivers
 
@@ -182,12 +154,20 @@ good [documentation here](https://nodemcu.readthedocs.io/en/master/en/flash/) in
 
   ![](screenshots/ESPlorer2017-02-06-22-58-30.png)
 
-1. Once connected, it's time to upload the code. Click Open in Esplorer and open each of the lua files on your computer and click "Save to ESP". Alternatively, you can use the Upload button to upload them all at once. [This documentation](http://esp8266.ru/download/esp8266-doc/Getting%20Started%20with%20the%20ESPlorer%20IDE%20-%20Rui%20Santos.pdf) was also very helpful in learning how to interact with the device using Esplorer.
-1. After all the code is uploaded, click the Reset button to restart the device. It should boot up, connect to your WiFi and output a message for each configured sensor, like this:
+1. Once connected, it's time to upload the code. Click the Upload button in ESPlorer and select all the lua files and upload them to the device. [This documentation](http://esp8266.ru/download/esp8266-doc/Getting%20Started%20with%20the%20ESPlorer%20IDE%20-%20Rui%20Santos.pdf) was also very helpful in learning how to interact with the device using Esplorer.
+1. After all the code is uploaded, toggle the RTS button on then off to restart the device. It should boot up, connect to your WiFi and output a link to begin the OAuth flow.
+1. Copy and paste the OAuth link URL into your web browser and begin the OAuth flow. You'll need the OAuth Client ID and Secret from the SmartApp.
+1. After you enter the Client ID and Secret, you'll see a page like this allowing you to authorize the devices you set up earlier:
+
+   ![](screenshots/Authorization2017-02-05-21-59-54.png)
+
+1. Authorize all the NodeMCU connected devices. When prompted, reboot the device by toggling the RTS button in ESPlorer on and off.
+
+1. Now your device should be working. You will see a debug message on boot for each configured sensor, like this:
 
   ![](screenshots/ESPlorer2017-02-06-23-02-30.png)
 
-1. Now let's test it out! The first sensor in this example is configured on pin 6 (labled D6). Take a wire and connect one end to pin D6 and the other end to the ground (GND). This completes the circuit, setting the pin low or 0, indicating that the contact sensor is closed. Hopefully it worked and you should see a success message in the Esplorer terminal, and when you open your SmartThings app you should see that the door is closed. Now remove the wire and watch it set to open.
+1. Let's test it out! The first sensor in this example is configured on pin 6 (labled D6). Take a wire and connect one end to pin D6 and the other end to the ground (GND). This completes the circuit, setting the pin low or 0, indicating that the contact sensor is closed. Hopefully it worked and you should see a success message in the Esplorer terminal, and when you open your SmartThings app you should see that the door is closed. Now remove the wire and watch it set to open.
 1. _Note about the pins:_ I found that some of the pins don't work very well when normally _low_. It took a lot of trial and error to figure out that pins D1, D2, D6 and D7 worked reliabliy for me. I had problems with D3, D9 and D10. Your mileage may vary.
 
 ### 7. Connect your switches at the alarm panel
