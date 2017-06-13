@@ -2,11 +2,6 @@
 -- VARIABLES & OPTIONS
 --
 
--- The `apiHost` and `apiEndpoint` can be obtained by doing an authenticated API call
--- to `https://graph.api.smartthings.com/api/smartapps/endpoints`. See the README for more details.
-apiHost     = "https://graph-na02-useast1.api.smartthings.com"
-apiEndpoint = "/api/smartapps/installations/88888888-cccc-dddd-55555-44444444444"
-
 -- Set `blink_led` to true to blink the blue onboard LED upon successful communication with SmartThings
 -- This is useful for visual confirmation and testing, but I leave it off in production
 -- The onboard LED is tied to pin D4 so you cannot use this pin for other things when enabled

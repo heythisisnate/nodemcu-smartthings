@@ -86,3 +86,21 @@ function saveOauthToken(oauth_json)
   print("Your SmartThings OAuth token is: " .. auth_token)
   writeCredentials()
 end
+
+function getApiEndpointAndStart()
+  local headers =  { "Host: https://graph.api.smartthings.com\r\n",
+    "Authorization: Bearer ", auth_token , "\r\nAccept: application/json\r\n" }
+
+  http.get('https://graph.api.smartthings.com/api/smartapps/endpoints',
+    table.concat(headers),
+    function(code, data)
+      if code == 200 then
+        apiHost, apiEndpoint = string.match(data, '"base_url":"([^"]+)","url":"([^"]+)"')
+        print("Communicating with SmartThings at " .. apiHost .. apiEndpoint)
+        require "application"
+      else
+        print(code)
+      end
+    end
+  )
+end

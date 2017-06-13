@@ -8,5 +8,5 @@ require "server"
 require "oauth"
 
 if auth_token then
-  require "application"
+  getApiEndpointAndStart()
 end

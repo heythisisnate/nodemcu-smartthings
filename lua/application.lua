@@ -1,8 +1,10 @@
 
 -- set up application variables
-globalHeaders = "Host: " .. apiHost .. "\r\n"
-globalHeaders = globalHeaders .. "Authorization: Bearer " .. auth_token .. "\r\n"
-globalHeaders = globalHeaders .. "Content-Type: application/json\r\n"
+globalHeaders = {
+  "Host: ", apiHost, "\r\nAuthorization: Bearer ", auth_token,
+  "\r\nContent-Type: application/json\r\n"
+}
+
 requestQueue = {}
 
 if blink_led then
@@ -23,7 +25,7 @@ function doNextRequest()
       local endpoint = requestData[1]
       local payload = cjson.encode(requestData[2])
       -- set http headers
-      local headers = globalHeaders .. "Content-Length: " .. string.len(payload) .. "\r\n"
+      local headers = table.concat(globalHeaders) .. "Content-Length: " .. string.len(payload) .. "\r\n"
 
       -- do the POST to SmartThings
       http.post(
