@@ -6,8 +6,7 @@ function startup()
     else
         print("Running application...")
         file.close("init.lua")
-        -- the actual application is stored in 'application.lua'
-        dofile("application.lua")
+        dofile("boot.lua")
     end
 end
 
