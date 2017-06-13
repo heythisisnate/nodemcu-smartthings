@@ -1,9 +1,8 @@
 
 -- set up application variables
-globalHeaders = {
+globalHeaders = table.concat({
   "Host: ", apiHost, "\r\nAuthorization: Bearer ", auth_token,
-  "\r\nContent-Type: application/json\r\n"
-}
+  "\r\nContent-Type: application/json\r\n"})
 
 requestQueue = {}
 
@@ -23,10 +22,9 @@ function doNextRequest()
 
   if requestData then
       local endpoint = requestData[1]
-      local payload = cjson.encode(requestData[2])
+      local payload = requestData[2]
       -- set http headers
-      local headers = table.concat(globalHeaders) .. "Content-Length: " .. string.len(payload) .. "\r\n"
-
+      local headers = globalHeaders .. "Content-Length: " .. string.len(payload) .. "\r\n"
       -- do the POST to SmartThings
       http.post(
         apiHost .. apiEndpoint .. endpoint,
@@ -48,7 +46,7 @@ function updateSensorState(sensor, newState)
   if sensor.state ~= newState then
     sensor.state = newState
     print(sensor.name .. " pin is " .. newState)
-    queueRequest("/event", {sensor_id = sensor.deviceId, state = newState})
+    queueRequest("/event", [[{"sensor_id":"]] .. sensor.deviceId .. [[","state":]] .. newState .. [[}]])
   end
 end
 
@@ -74,7 +72,7 @@ end
 for i,sensor in pairs(sensors) do
   gpio.mode(sensor.gpioPin, gpio.INPUT, gpio.PULLUP)
   sensor.state = gpio.read(sensor.gpioPin)
-  queueRequest("/event", {sensor_id = sensor.deviceId, state = sensor.state})
+  queueRequest("/event", [[{"sensor_id":"]] .. sensor.deviceId .. [[","state":]] .. sensor.state .. [[}]])
 
   gpio.trig(sensor.gpioPin, "both", function (level)
     local newState = gpio.read(sensor.gpioPin)
@@ -88,7 +86,7 @@ end
 -- In case of a HTTP failure, re-insert the request data back into the first position so it will
 -- retry on the next cycle.
 -- This throttles the HTTP calls to SmartThings in an attempt to prevent timeouts
-tmr.create():alarm(1000, tmr.ALARM_AUTO, doNextRequest)
+tmr.create():alarm(1500, tmr.ALARM_AUTO, doNextRequest)
 
 -- Poll sensors periodically if configured
 if poll_interval and poll_interval > 0 then

@@ -52,7 +52,7 @@ mappings {
 
 def handle_event() {
   def event = request.JSON
-  def allSensors = (contactSensors?:[] + motionSensors?:[] + smokeDetectors?:[]) - null
+  def allSensors = (contactSensors?:[]) + (motionSensors?:[]) + (smokeDetectors?:[]) - null
   def device = allSensors.find { 
     event.sensor_id == it.id
   }
