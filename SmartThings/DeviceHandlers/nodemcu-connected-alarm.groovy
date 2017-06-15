@@ -25,18 +25,18 @@ metadata {
 
   tiles {
     standardTile("alarm", "device.alarm", decoration: "flat") {
-      state "off", label:'${name}', action:"alarm.both", icon:"st.alarm.alarm.alarm"
-      state "siren", label:'${name} on', action:"alarm.off", icon:"st.alarm.alarm.alarm", backgroundColor: "#ffa81e"
-      state "strobe", label:'${name} on', action:"alarm.off", icon:"st.alarm.alarm.alarm", backgroundColor: "#ffa81e"
+      state "off", label:'${name}', action:"alarm.both", icon:"st.alarm.alarm.alarm", backgroundColor: "#ffffff"
+      state "siren", label:'${name} on', action:"alarm.off", icon:"st.alarm.alarm.alarm", backgroundColor: "#e86d13"
+      state "strobe", label:'${name} on', action:"alarm.off", icon:"st.alarm.alarm.alarm", backgroundColor: "#e86d13"
       state "both", label:'ALARM!', action:"alarm.off", icon:"st.alarm.alarm.alarm", backgroundColor: "#e86d13"
     }
     standardTile("siren", "device.alarm", inactiveLabel: false, decoration: "flat") {
-      state "default", label:'', action:"alarm.siren", icon:"st.secondary.siren"
-      state "siren", label:'', action:"alarm.off", icon:"st.secondary.siren", backgroundColor: "#ffa81e"
+      state "default", label:'', action:"alarm.siren", icon:"st.secondary.siren", backgroundColor: "#ffffff"
+      state "siren", label:'', action:"alarm.off", icon:"st.secondary.siren", backgroundColor: "#e86d13"
     }
     standardTile("strobe", "device.alarm", inactiveLabel: false, decoration: "flat") {
-      state "default", label:'', action:"alarm.strobe", icon:"st.secondary.strobe"
-      state "strobe", label:'', action:"alarm.off", icon:"st.secondary.strobe", backgroundColor: "#ffa81e"
+      state "default", label:'', action:"alarm.strobe", icon:"st.secondary.strobe", backgroundColor: "#ffffff"
+      state "strobe", label:'', action:"alarm.off", icon:"st.secondary.strobe", backgroundColor: "#e86d13"
     }
   }
   main "alarm"

@@ -26,8 +26,8 @@ metadata {
 
   tiles {
     standardTile("smoke", "device.smoke", width: 2, height: 2) {
-      state "detected", label: '${name}', icon: "st.alarm.smoke.smoke"
-      state "clear", label: '${name}', icon: "st.alarm.smoke.clear"
+      state "detected", label: '${name}', icon: "st.alarm.smoke.smoke", backgroundColor: "#e86d13"
+      state "clear", label: '${name}', icon: "st.alarm.smoke.clear", backgroundColor: "#ffffff"
     }
 
     main "smoke"
