@@ -88,11 +88,12 @@ function saveOauthToken(oauth_json)
 end
 
 function getApiEndpointAndStart()
-  local headers =  { "Host: https://graph.api.smartthings.com\r\n",
-    "Authorization: Bearer ", auth_token , "\r\nAccept: application/json\r\n" }
+  local headers =  "Host: https://graph.api.smartthings.com\r\n"
+  headers = headers .. "Authorization: Bearer " .. auth_token
+  headers = headers .. "\r\nAccept: application/json\r\n"
 
   http.get('https://graph.api.smartthings.com/api/smartapps/endpoints',
-    table.concat(headers),
+    headers,
     function(code, data)
       if code == 200 then
         apiHost, apiEndpoint = string.match(data, '"base_url":"([^"]+)","url":"([^"]+)"')

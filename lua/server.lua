@@ -84,9 +84,13 @@ function processRequest(connection, request)
   send(connection)
 end
 
-httpListener = net.createServer(net.TCP)
-httpListener:listen(8100, function(connection)
-  connection:on("receive", processRequest)
-end)
+function startServer()
+  httpListener = net.createServer(net.TCP)
+  httpListener:listen(8100, function(connection)
+    connection:on("receive", processRequest)
+  end)
 
-print("Starting server on HTTP port 8100")
+  print("Starting server on HTTP port 8100")
+end
+
+tmr.create():alarm(10000, tmr.ALARM_SINGLE, startServer)

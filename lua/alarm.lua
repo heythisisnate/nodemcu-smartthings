@@ -1,10 +1,10 @@
 -- Identify the network IP, port and MAC address of the device for using the siren
-queueRequest("/sync",
-  table.concat({ [[{"device_id":"]], alarm.deviceId,
-    [[","ip":"]], wifi.sta.getip(),
-    [[","port":]], alarm.httpPort,
-    [[,"mac":"]], wifi.sta.getmac(), [["}]] })
-)
+queueRequest("/sync", {
+  device_id = alarm.deviceId,
+  ip = wifi.sta.getip(),
+  port = alarm.httpPort,
+  mac = wifi.sta.getmac()
+})
 
 if alarm.sirenPin then
   gpio.mode(alarm.sirenPin, gpio.OUTPUT)
