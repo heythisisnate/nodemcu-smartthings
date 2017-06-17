@@ -6,7 +6,7 @@ function startup()
     else
         print("Running application...")
         file.close("init.lua")
-        dofile("boot.lua")
+        require "boot"
     end
 end
 

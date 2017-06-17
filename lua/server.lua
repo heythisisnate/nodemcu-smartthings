@@ -38,15 +38,15 @@ function processRequest(connection, request)
       redirect(oauthRequestCode(request))
     else
       response_code = "200 OK"
-      response_body = oauthStart()
+      file.open('oauth.html')
+      response_body = file.read(1200)
+      file.close()
     end
   elseif string.match(requestObject.path, '^/oauth/callback') then
     local auth_code = string.match(requestObject.path, 'code=(%w+)')
     local payload = "grant_type=authorization_code&code=" .. auth_code .. "&client_id=" .. oauth_client_id .. "&client_secret=" .. oauth_client_secret .. "&redirect_uri=" .. oauthCallbackUrl()
     response_code = "200 OK"
     content_type = "text/html"
-    response_body = oauthComplete()
-
     http.post(
       'https://graph.api.smartthings.com/oauth/token',
       "Content-Type: application/x-www-form-urlencoded\r\nContent-Length: " .. string.len(payload) .. "\r\n",
@@ -55,6 +55,10 @@ function processRequest(connection, request)
           saveOauthToken(data)
         end
     )
+    file.open('oauth-complete.html')
+    response_body = file.read()
+    file.close()
+
   elseif device_id == alarm.deviceId and requestObject.method == 'POST' then
     alarmAction(action)
     response_code = "200 OK"
@@ -84,13 +88,9 @@ function processRequest(connection, request)
   send(connection)
 end
 
-function startServer()
-  httpListener = net.createServer(net.TCP)
-  httpListener:listen(8100, function(connection)
-    connection:on("receive", processRequest)
-  end)
+httpListener = net.createServer(net.TCP)
+httpListener:listen(8100, function(connection)
+  connection:on("receive", processRequest)
+end)
 
-  print("Starting server on HTTP port 8100")
-end
-
-tmr.create():alarm(10000, tmr.ALARM_SINGLE, startServer)
+print("Listening for HTTP commands on port 8100")

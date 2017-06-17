@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Helvetica, Arial, sans-serif; }
+    input[type=text] {
+      display: inline-block;
+      height: 52px;
+      font-size: 16px;
+      width: 100%;
+      margin: 0 0 15px;
+      padding: 0 1em;
+      color: #30373b;
+      box-shadow: 0 0 0 1px #c4cdd5;
+      border: 0;
+      border-radius: 5px;
+      background-color: #fff;
+    }
+    .paper {
+      width: 70%;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+<div class="paper">
+  <h1>Get Started with NodeMCU SmartThings</h1>
+  <p>Authorize this device to access your SmartThings account. Edit the NodeMCU SmartThings SmartApp in
+    the SmartThings web based IDE. Scroll down to the the OAuth section and copy the <em>Client ID</em> and <em>Client Secret</em>
+    here.</p>
+  <form id="oauth_form" action="/oauth" method="POST">
+    <input type="text" name="oauth_client_id" placeholder="OAuth Client ID"></input>
+    <input type="text" name="oauth_client_secret" placeholder="OAuth Client Secret"></input>
+    <input type="submit" value="Submit"></input>
+  </form>
+</div>
+</body>
+</html>

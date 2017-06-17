@@ -93,7 +93,7 @@ end
 -- In case of a HTTP failure, re-insert the request data back into the first position so it will
 -- retry on the next cycle.
 -- This throttles the HTTP calls to SmartThings in an attempt to prevent timeouts
-tmr.create():alarm(1500, tmr.ALARM_AUTO, doNextRequest)
+tmr.create():alarm(1000, tmr.ALARM_AUTO, doNextRequest)
 
 -- Poll sensors periodically if configured
 if poll_interval and poll_interval > 0 then
