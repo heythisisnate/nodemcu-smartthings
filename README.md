@@ -1,10 +1,52 @@
 # SmartThings Connected Wired Security System using a NodeMCU ESP8266
 
-This project will help you connect SmartThings to wired contact sensors (for doors and windows) and motion sensors that you may already have pre-wired in your home from a built-in home security system. There are three components to the project:
+This project will help you connect wired contact sensors and motion sensors from an old wired home alarm system (such as
+Honeywell, ADT, Interlogix, etc) to Samsung SmartThings. Convert your old wired alarm system into an internet connected
+ Smart Alarm!
+ 
+We use an inexpensive NodeMCU ESP82660 wifi enabled development board to connect our wired alarm system sensors to the
+SmartThings.
+ 
+There are three components to the project:
 
 1. a SmartThings Device Handler for contact sensors and motion sensors
-2. a SmartThings SmartApp that receives HTTP POST messages
+2. a SmartThings SmartApp that interfaces with the Wifi-connected device in your home
 3. Lua code for the NodeMCU device that connects your wired system to the cloud
+
+## Update June 17 2017
+#### Release 1.6: Easy OAuth and Pre-Loaded Kits Available for Pre-order!
+
+**Easy OAuth:** Many people who contacted me for help were having trouble with the OAuth flow. In the latest [1.6 release](https://github.com/heythisisnate/nodemcu-smartthings/releases/tag/1.6)
+this is now much simpler! You no longer have to manually do the OAuth step. Just open your browser, copy and paste your OAuth
+ Client ID and Secret when prompted, and the application handles the rest.
+ 
+**Pre-loaded Kits for Sale!** I'm working hard to make it as easy as possible for anyone to connect their wired alarm system
+ to SmartThings, so I've decided to begin selling all-inclusive DIY kits with this software pre-loaded! With one of my DIY kits,
+ there's no flashing or code to modify. Simply wire your sensors and alarm following the online instructions and open up
+ your web browser to configure.
+ 
+ ### [Now Accepting Pre-orders](https://nodemcu-smartthings.com/collections/wired-alarm-system-smartthings-connection-kits-and-accessories) for first shipment in August 2017
+  
+ <img src="screenshots/complete-kit.jpg" width="252" height="189" align="right"/>
+ 
+ #### [Wired Alarm System Complete DIY Kit](https://nodemcu-smartthings.com/collections/wired-alarm-system-smartthings-connection-kits-and-accessories/products/wired-alarm-system-complete-kit)
+ * For connecting up to 5 sensors and one siren or alarm
+ * Software is pre-loaded! Just wire it up and configure with your web browser.
+ * Includes NodeMCU board, NodeMCU base, relay for siren, and jumper wires
+ * Includes email support to help you get up and running
+ * **Pre-order now** for first shipment in August 2017 
+
+ <img src="screenshots/add-on-kit.jpg" width="252" height="189" align="right"/>
+ 
+ #### [Wired Alarm System Add-on DIY Kit](https://nodemcu-smartthings.com/collections/wired-alarm-system-smartthings-connection-kits-and-accessories/products/wired-alarm-system-add-on-kit)
+ * For connecting up to 6 sensors (no siren)
+ * Software is pre-loaded! Just wire it up and configure with your web browser.
+ * Includes NodeMCU board, NodeMCU base and jumper wires
+ * Includes email support to help you get up and running
+ * **Pre-order now** for first shipment in August 2017
+ 
+ #### [Donate to this Project!](https://nodemcu-smartthings.com/products/donate-to-this-project)
+ * If you've loved this open-source project, donate any amount to support it!
 
 ### Background
 
@@ -29,7 +71,7 @@ _Update 2:_ One user reported that he had success with [this board](https://www.
  
 ## Updates
 
-##### v1.6 / 2017-06-12
+### v1.6 / 2017-06-17
 
 _Feature:_ Easy OAuth. The application handles the OAuth flow automatically now. Just point your browser 
 to `http://<your-device-ip>:8100/oauth`. See the updated README for details.
@@ -40,12 +82,14 @@ _Bug Fix:_ Strobe output did not work due to copy/paste bug.
 
 _Bug Fix:_ Fix error in SmartApp when you only have motion sensors authorized.
 
-##### v1.5 / 2017-04-07
+**IMPORTANT: Read the [1.6 upgrade notes](https://github.com/heythisisnate/nodemcu-smartthings-sensors/releases/tag/1.6) if you're upgrading from an earlier version.**
+
+### v1.5 / 2017-04-07
 _Feature:_ Connect a wired siren and/or strobe. Integrates seamlessly with the Smart Home Monitor app.
 
-**IMPORTANT: Read the [upgrade notes](https://github.com/heythisisnate/nodemcu-smartthings-sensors/releases/tag/1.5) if you're upgrading from an earlier version.** 
+**IMPORTANT: Read the [1.5 upgrade notes](https://github.com/heythisisnate/nodemcu-smartthings-sensors/releases/tag/1.5) if you're upgrading from an earlier version.** 
 
-##### v1.3 / 2017-03-29
+### v1.3 / 2017-03-29
 
 _Feature:_ Blink the onboard LED on successful communication with SmartThings. To enable set `blink_led = true` in
 `variables.lua`
@@ -53,11 +97,11 @@ _Feature:_ Blink the onboard LED on successful communication with SmartThings. T
 _Feature:_ **Reliable polling**. Configure by setting `poll_interval` in `variables.lua` to a number to indicate the number
 of seconds between polling for sensors that may have gotten out of sync. 
 
-##### v1.2 / 2017-03-06
+### v1.2 / 2017-03-06
 
 _Feature:_ Reports the status of each sensor upon startup.
 
-##### v1.1 / 2017-02-18
+### v1.1 / 2017-02-18
 
 _Feature:_ Support for wired smoke detectors.
 
@@ -154,7 +198,10 @@ good [documentation here](https://nodemcu.readthedocs.io/en/master/en/flash/) in
 
   ![](screenshots/ESPlorer2017-02-06-22-58-30.png)
 
-1. Once connected, it's time to upload the code. Click the Upload button in ESPlorer and select all the lua files and upload them to the device. [This documentation](http://esp8266.ru/download/esp8266-doc/Getting%20Started%20with%20the%20ESPlorer%20IDE%20-%20Rui%20Santos.pdf) was also very helpful in learning how to interact with the device using Esplorer.
+1. Once connected, it's time to upload the code. Click the Upload button in ESplorer and navigate to the `lua` directory. Highlight all the `lua` and `html` files and click Open to upload them to the device:
+ 
+  ![](screenshots/ESP2017-06-17-14-37-45.png)
+  
 1. After all the code is uploaded, toggle the RTS button on then off to restart the device. It should boot up, connect to your WiFi and output a link to begin the OAuth flow.
 1. Copy and paste the OAuth link URL into your web browser and begin the OAuth flow. You'll need the OAuth Client ID and Secret from the SmartApp.
 1. After you enter the Client ID and Secret, you'll see a page like this allowing you to authorize the devices you set up earlier:
@@ -190,7 +237,6 @@ signal from the ESP8266 board. These instructions are written for the relay link
 1. Connect the NO (Normally Open) on the relay to the red (+) wire going to your siren or strobe.
 1. Make sure the black (-) wire of the siren/strobe is connected to the ground (-) on the alarm panel.
 1. Connect the COM on the relay to the 12V aux power out (+) on the alarm panel with a jumper wire.
-
 
 ## Problems or Questions
 
