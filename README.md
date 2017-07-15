@@ -1,4 +1,19 @@
-# SmartThings Connected Wired Security System using a NodeMCU ESP8266
+# Update July 15, 2017
+## This project has been renamed and superseded by [Konnected Security 2.0](https://github.com/konnected-io/konnected-security)
+
+The original author (**@heythisisnate**) teamed up with SmartThings community member **@copyninja** and we created a
+complete re-write of this alarm system integration project that's much easier to set up and more stable. We recommend 
+ **all users** upgrade to the new version: [https://github.com/konnected-io/konnected-security](https://github.com/konnected-io/konnected-security)
+ See the [SmartThings Community release announcement thread here](https://community.smartthings.com/t/release-konnected-security-2-0-connect-wired-alarm-system-sensors-and-siren-to-smartthings-big-update-and-new-name/92828/7)
+ 
+Also check out the [Konnected Security Install Guide](https://docs.konnected.io/security-alarm-system) for more detailed
+setup and wiring instructions.
+
+Unfortunately, since this is a re-write, there's no direct upgrade path for users of the original project to Konnected
+Security 2.0. You'll have to remove your devices from SmartThings and set them up again using the app.
+
+
+## SmartThings Connected Wired Security System using a NodeMCU ESP8266
 
 This project will help you connect wired contact sensors and motion sensors from an old wired home alarm system (such as
 Honeywell, ADT, Interlogix, etc) to Samsung SmartThings. Convert your old wired alarm system into an internet connected
