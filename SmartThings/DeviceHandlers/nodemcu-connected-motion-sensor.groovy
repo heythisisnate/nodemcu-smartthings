@@ -27,8 +27,8 @@ metadata {
 
   tiles {
     standardTile("motion", "device.motion", width: 2, height: 2) {
-      state "active", label: '${name}', icon: "st.motion.motion.active"
-      state "inactive", label: '${name}', icon: "st.motion.motion.inactive"
+      state "active", label: '${name}', icon: "st.motion.motion.active", backgroundColor: "#00a0dc"
+      state "inactive", label: '${name}', icon: "st.motion.motion.inactive", backgroundColor: "#ffffff"
     }
 
     main "motion"
